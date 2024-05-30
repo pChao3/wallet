@@ -1,0 +1,8 @@
+.connect-item-wrap {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid black;
+  cursor: pointer;
+  width: 114px;
+}
