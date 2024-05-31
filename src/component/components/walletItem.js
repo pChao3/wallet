@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useConnect } from 'wagmi';
-import '../css/walletItem.css';
+import './WalletItem.css';
 
 function WalletItem(props) {
   const { connector } = props;
