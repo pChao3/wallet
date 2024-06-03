@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import WalletComp from '../components/WalletComp';
-import Name from '../components/Name';
+import Name from '../../component/components/Name';
 import './Content.css';
 function ContentLayout() {
   return (
