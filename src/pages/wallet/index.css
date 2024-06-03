@@ -1,12 +1,23 @@
-.content-wrap {
+.wallet-wrap {
   color: #fff;
   width: 500px;
   height: 300px;
   margin: auto;
   padding: 24px;
-  margin-top: 150px;
+  /* margin-top: 150px; */
   background-color: rgba(22, 36, 27, 1);
   border: 1px solid black;
   border-radius: 20px;
   box-shadow: 0px 10px 5px black;
+  .content {
+    text-align: center;
+
+    .input-wrap {
+      padding: 24px;
+
+      .ant-input {
+        margin-bottom: 12px;
+      }
+    }
+  }
 }
