@@ -12,6 +12,10 @@ const navs = [
     url: '/',
   },
   {
+    name: 'transfer',
+    url: '/transfer',
+  },
+  {
     name: 'wallet',
     url: '/wallet',
   },
