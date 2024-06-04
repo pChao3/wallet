@@ -1,6 +1,7 @@
 import App from '../App'; //正常加载方式
-import Wallet from '../pages/wallet';
-import ContentLayout from '../pages/content/Content';
+import ContentLayout from '../pages/content/Content'; //name
+import Transfer from '../pages/transfer'; // transfer
+import Wallet from '../pages/wallet'; // wallet
 
 export default [
   {
@@ -15,6 +16,10 @@ export default [
       {
         path: 'wallet',
         element: <Wallet />,
+      },
+      {
+        path: 'transfer',
+        element: <Transfer />,
       },
       //   {
       //     path: 'navigate',
