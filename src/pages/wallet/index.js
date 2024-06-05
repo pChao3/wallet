@@ -22,10 +22,8 @@ function Wallet() {
 
   const { address } = useAccount();
 
-  const {
-    data: { formatted: value, symbol },
-  } = useBalance({
-    token: fdToken,
+  const res = useBalance({
+    // token: fdToken,
     address: address,
   });
 
@@ -47,8 +45,8 @@ function Wallet() {
           {radio === 1 ? (
             <div>
               <span>
-                your fd balance: {value}
-                {symbol}
+                your balance: {res.data && res.data.formatted}
+                {res.data && res.data.symbol}
               </span>
               <Input onChange={e => setDepositValie(e.target.value)} />
               <Button type="primary" block onClick={deposit}>
@@ -57,7 +55,7 @@ function Wallet() {
             </div>
           ) : (
             <div>
-              <span>your fd-wallet balance:{}</span>
+              <span>your wallet balance:{}</span>
               <Input onChange={e => setWithDrawValue(e.target.value)} />
               <Button type="primary" block onClick={withDraw}>
                 WithDraw
