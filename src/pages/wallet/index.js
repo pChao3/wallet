@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import './index.css';
 import { Input, Segmented, Button } from 'antd';
+
+import { useBalance, useAccount } from 'wagmi';
+
+import fdToken from '../tokenConfig';
 const options = [
   {
     label: 'deposit',
@@ -16,10 +20,15 @@ function Wallet() {
   const [depositValue, setDepositValie] = useState(0);
   const [withDrawValue, setWithDrawValue] = useState(0);
 
+  const { address } = useAccount();
+
+  const res = useBalance({
+    // token: fdToken,
+    address: address,
+  });
+
   const deposit = () => {
     console.log(depositValue);
-
-    // transfer
   };
 
   const withDraw = () => {
@@ -35,7 +44,10 @@ function Wallet() {
         <div className="input-wrap">
           {radio === 1 ? (
             <div>
-              <span>Amount:{}</span>
+              <span>
+                your balance: {res.data && res.data.formatted}
+                {res.data && res.data.symbol}
+              </span>
               <Input onChange={e => setDepositValie(e.target.value)} />
               <Button type="primary" block onClick={deposit}>
                 Deposit
@@ -43,7 +55,7 @@ function Wallet() {
             </div>
           ) : (
             <div>
-              <span>Amount:{}</span>
+              <span>your wallet balance:{}</span>
               <Input onChange={e => setWithDrawValue(e.target.value)} />
               <Button type="primary" block onClick={withDraw}>
                 WithDraw
