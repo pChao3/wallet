@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import WalletComp from '../components/WalletComp';
+import Connect from '../components/Connect';
 import { useAccount, useDisconnect } from 'wagmi';
 
 import './Header.css';
@@ -40,7 +40,7 @@ function Header() {
         onCancel={() => setOpenModal(false)}
         footer={null}
       >
-        <WalletComp />
+        <Connect />
       </Modal>
       <div className="nav-wrap">
         {navs.map(i => {
