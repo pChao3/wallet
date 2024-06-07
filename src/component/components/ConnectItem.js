@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useConnect } from 'wagmi';
-import './WalletItem.css';
+import './ConnectItem.css';
 
-function WalletItem(props) {
+function ConnectItem(props) {
   const { connector } = props;
   const { connect } = useConnect();
   const handleConnect = () => {
@@ -17,4 +17,4 @@ function WalletItem(props) {
   );
 }
 
-export default WalletItem;
+export default ConnectItem;

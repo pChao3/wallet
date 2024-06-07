@@ -1,1 +1,1 @@
-export default '0x1c871557c7b03ac0d8951b3e6f0b0a473036e6b8';
+export const walletAddress = '0x9A84da3EF2145Af8dCA02379Aa934e6F859fcB23'; // wallet contract address

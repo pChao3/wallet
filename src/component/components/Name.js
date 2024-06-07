@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import contractJson from './contract.json';
+import contractJson from '../../contract/contract.json';
 import { useState, useEffect, useCallback } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
 import './Name.css';
@@ -11,6 +11,13 @@ function Name() {
     address: contractAddress,
     functionName: 'getName',
   });
+
+  const t = useReadContract({
+    abi: contractJson.abi,
+    address: contractAddress,
+    functionName: 'getName',
+  });
+
   const { isConnected, address } = useAccount();
 
   const { writeContractAsync, data: hash } = useWriteContract();
@@ -28,8 +35,6 @@ function Name() {
       address: contractAddress,
       functionName: 'changeName',
       args: [value],
-    }).then(res => {
-      console.log('data hash', res);
     });
   }, [value, isConnected]);
 

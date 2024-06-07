@@ -4,8 +4,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { message } from 'antd';
 
 import routers from './router';
+message.config({
+  maxCount: 1,
+});
 
 const router = createBrowserRouter(routers);
 
