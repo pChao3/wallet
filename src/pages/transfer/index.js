@@ -1,46 +1,58 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './index.css';
 import { Input, Button, message } from 'antd';
 
-import { useSendTransaction, useAccount } from 'wagmi';
+import {
+  useSendTransaction,
+  useAccount,
+  useWriteContract,
+  useReadContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi';
 import { parseEther } from 'viem';
+import fdTokenAbi from '../../contract/Token.json';
+import { fdTokenAddress } from '../addressConfig';
 
 function Wallet() {
   const [amount, setAmount] = useState(0);
-  const [address, setAddress] = useState(0);
+  const [toAddress, setAddress] = useState(0);
 
-  const { isConnected } = useAccount();
-  const { data, sendTransaction } = useSendTransaction();
+  const { isConnected, address } = useAccount();
+  const { writeContractAsync, data: hash } = useWriteContract();
 
-  const su = () => {
-    message.success('转账成功！');
-  };
-  const error = () => {
-    message.success('转账失败！');
-  };
+  const { data, refetch } = useReadContract({
+    abi: fdTokenAbi.abi,
+    address: fdTokenAddress,
+    functionName: 'balanceOf',
+    args: [address],
+  });
+
   const transfer = () => {
     if (!isConnected) {
       message.error('请连接钱包再进行操作！');
       return;
     }
     // transfer
-    sendTransaction(
-      {
-        to: address,
-        value: parseEther(amount),
-      },
-      {
-        onSuccess: su,
-        onError: error,
-      }
-    );
+    writeContractAsync({
+      abi: fdTokenAbi.abi,
+      address: fdTokenAddress,
+      functionName: 'transfer',
+      args: [toAddress, amount * 10 ** 18],
+    });
   };
+
+  const { isSuccess } = useWaitForTransactionReceipt({ hash });
+  if (isSuccess) {
+    message.success('转账成功！');
+    refetch();
+  }
 
   return (
     <div className="wallet-wrap">
       <div className="content">
         <div className="input-wrap">
           <div>
+            <p style={{ textAlign: 'center' }}>your fd balance:{data?.toString()} fd</p>
             <span>Amount:{}</span>
             <Input onChange={e => setAmount(e.target.value)} />
             <span>Address:{}</span>

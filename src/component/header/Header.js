@@ -12,7 +12,7 @@ const navs = [
     url: '/',
   },
   {
-    name: 'transfer',
+    name: 'ERC20-transfer',
     url: '/transfer',
   },
   {
