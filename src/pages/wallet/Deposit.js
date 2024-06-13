@@ -11,7 +11,7 @@ import {
 } from 'wagmi';
 import { parseEther } from 'viem';
 import walletJson from '../../contract/wallet.json';
-import { walletAddress } from '../tokenConfig';
+import { walletAddress } from '../addressConfig';
 
 function Deposit() {
   const [depositValue, setDepositValie] = useState();

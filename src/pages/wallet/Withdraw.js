@@ -3,7 +3,7 @@ import { Input, Button, message } from 'antd';
 
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import walletJson from '../../contract/wallet.json';
-import { walletAddress } from '../tokenConfig';
+import { walletAddress } from '../addressConfig';
 
 function Withdraw() {
   const [withDrawValue, setWithDrawValue] = useState();
