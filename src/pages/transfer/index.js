@@ -51,6 +51,7 @@ function Wallet() {
     <div className="wallet-wrap">
       <div className="content">
         <div className="input-wrap">
+          <p>$fd</p>
           <div>
             <p style={{ textAlign: 'center' }}>your fd balance:{data?.toString()} fd</p>
             <span>Amount:{}</span>

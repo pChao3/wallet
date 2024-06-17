@@ -16,6 +16,12 @@
       padding: 24px;
       text-align: left;
 
+      > p {
+        margin: 0px;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+      }
       .ant-input {
         margin-bottom: 12px;
       }
