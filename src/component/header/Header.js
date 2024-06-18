@@ -12,6 +12,10 @@ const navs = [
     url: '/',
   },
   {
+    name: 'faucet',
+    url: '/faucet',
+  },
+  {
     name: 'ERC20-transfer',
     url: '/transfer',
   },
