@@ -6,6 +6,15 @@
   align-items: center;
   justify-content: center;
 
+  .header-logo {
+    position: absolute;
+    left: 3%;
+    font-size: 28px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
   .connect-wrap {
     position: absolute;
     right: 4px;
@@ -16,11 +25,18 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
+  a {
+    text-decoration: none;
+  }
   .activeClassName {
-    background-color: aliceblue;
+    background-color: black;
     width: 30%;
     text-align: center;
     line-height: 48px;
-    color: red;
+    color: #fff;
+    font-weight: 700;
+  }
+  .normal {
+    color: black;
   }
 }

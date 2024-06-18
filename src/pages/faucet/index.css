@@ -1,0 +1,19 @@
+.faucet-wrap {
+  width: 30%;
+  margin: auto;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  padding: 12px;
+  .ant-input-group-addon {
+    color: #fff;
+    background-color: brown;
+  }
+  .ant-btn {
+    margin-top: 12px;
+  }
+  p {
+    font-weight: 700;
+  }
+}

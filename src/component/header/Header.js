@@ -12,11 +12,15 @@ const navs = [
     url: '/',
   },
   {
+    name: 'faucet',
+    url: '/faucet',
+  },
+  {
     name: 'ERC20-transfer',
     url: '/transfer',
   },
   {
-    name: 'wallet',
+    name: 'ETH-wallet',
     url: '/wallet',
   },
 ];
@@ -34,6 +38,7 @@ function Header() {
 
   return (
     <div className="header-wrap">
+      <div className="header-logo">web3 Utils</div>
       <Modal
         title="请选择钱包进行连接！"
         open={openModal}
@@ -48,7 +53,7 @@ function Header() {
             <NavLink
               to={i.url}
               key={i.url}
-              className={({ isActive }) => (isActive ? 'activeClassName' : '')}
+              className={({ isActive }) => (isActive ? 'activeClassName' : 'normal')}
             >
               {i.name}
             </NavLink>
