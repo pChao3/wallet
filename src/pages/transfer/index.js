@@ -10,8 +10,8 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi';
 import { parseEther } from 'viem';
-import fdTokenAbi from '../../contract/Token.json';
-import { fdTokenAddress } from '../addressConfig';
+import AirTokenAbi from '../../contract/Token.json';
+import { AirToken } from '../addressConfig';
 
 function Wallet() {
   const [amount, setAmount] = useState(0);
@@ -21,8 +21,8 @@ function Wallet() {
   const { writeContractAsync, data: hash } = useWriteContract();
 
   const { data, refetch } = useReadContract({
-    abi: fdTokenAbi.abi,
-    address: fdTokenAddress,
+    abi: AirTokenAbi.abi,
+    address: AirToken,
     functionName: 'balanceOf',
     args: [address],
   });
@@ -34,8 +34,8 @@ function Wallet() {
     }
     // transfer
     writeContractAsync({
-      abi: fdTokenAbi.abi,
-      address: fdTokenAddress,
+      abi: AirTokenAbi.abi,
+      address: AirToken,
       functionName: 'transfer',
       args: [toAddress, amount * 10 ** 18],
     });
@@ -51,9 +51,9 @@ function Wallet() {
     <div className="wallet-wrap">
       <div className="content">
         <div className="input-wrap">
-          <p>$fd</p>
+          <p>$Air</p>
           <div>
-            <p style={{ textAlign: 'center' }}>your fd balance:{data?.toString()} fd</p>
+            <p style={{ textAlign: 'center' }}>your Air balance:{data?.toString()} Air</p>
             <span>Amount:{}</span>
             <Input onChange={e => setAmount(e.target.value)} />
             <span>Address:{}</span>
