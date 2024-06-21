@@ -22,18 +22,20 @@ function Faucet() {
       message.error('请连接您的钱包！');
       return;
     }
-
-    await writeContractAsync({
+    writeContractAsync({
       abi: faucetAbi.abi,
       address: faucetAddress,
       functionName: 'getToken',
       args: [targetAddress],
+    }).catch(error => {
+      message.info('您当天已经领取过AirToken了,请24小时之后再进行尝试!');
+      console.log('error', error);
     });
   };
 
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
   if (isSuccess) {
-    message.success('has received $10000 Air token!');
+    message.success('you has received $10000 Air token!');
     refetch();
   }
 
