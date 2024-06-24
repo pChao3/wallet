@@ -8,11 +8,11 @@ import { NavLink } from 'react-router-dom';
 
 const navs = [
   {
-    name: 'name',
+    name: 'Name',
     url: '/',
   },
   {
-    name: 'faucet',
+    name: 'Faucet',
     url: '/faucet',
   },
   {
