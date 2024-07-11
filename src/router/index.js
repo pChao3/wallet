@@ -3,6 +3,7 @@ import ContentLayout from '../pages/content/Content'; //name
 import Faucet from '../pages/faucet';
 import Transfer from '../pages/transfer'; // transfer
 import Wallet from '../pages/wallet'; // wallet
+import NFTMarket from '../pages/NFTMarket/index';
 
 export default [
   {
@@ -25,6 +26,10 @@ export default [
       {
         path: 'transfer',
         element: <Transfer />,
+      },
+      {
+        path: 'NFTMarket',
+        element: <NFTMarket />,
       },
       //   {
       //     path: 'navigate',

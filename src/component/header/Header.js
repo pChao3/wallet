@@ -23,6 +23,10 @@ const navs = [
     name: 'ETH-wallet',
     url: '/wallet',
   },
+  {
+    name: 'NFT-Market',
+    url: '/NFTMarket',
+  },
 ];
 
 function Header() {
