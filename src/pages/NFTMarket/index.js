@@ -1,5 +1,34 @@
+import { useState } from 'react';
+import { Radio } from 'antd';
+import './index.css';
+
+import Market from './market.js';
+import Personal from './personal.js';
+const options = [
+  {
+    label: '个人中心',
+    value: 1,
+  },
+  {
+    label: 'NFT-市场',
+    value: 2,
+  },
+];
+
 function Index() {
-  return <div className="  bg-slate-100 w-16 h-16 text-white border-solid border-white">csss</div>;
+  const [value, setValue] = useState(1);
+  return (
+    <div className="text-center">
+      <Radio.Group
+        options={options}
+        onChange={k => setValue(k.target.value)}
+        value={value}
+        optionType="button"
+        buttonStyle="solid"
+      />
+      <div>{value === 1 ? <Personal /> : <Market />}</div>
+    </div>
+  );
 }
 
 export default Index;
