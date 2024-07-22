@@ -77,8 +77,10 @@ function MarketItem({ tokenId, refetchNFT }) {
   }, [buyNFTReceipt.isSuccess]);
 
   const isOwner = useMemo(() => {
-    return address == data[1];
-  }, [address, data[1]]);
+    if (data && data[1]) {
+      return address == data[1];
+    }
+  }, [address, data]);
 
   return (
     <div className="w-full h-48 text-center bg-sky-200 " key={tokenId}>
