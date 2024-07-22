@@ -5,14 +5,8 @@ import {
   useWaitForTransactionReceipt,
 } from 'wagmi';
 
-import { NFTAddress } from '../addressConfig';
-import NFTABI from '../../contract/NFT_ABI.json';
+import { nftContract } from './config';
 import Item from './Item';
-
-const nftContract = {
-  abi: NFTABI.abi,
-  address: NFTAddress,
-};
 
 function Index() {
   const { writeContractAsync: mint, data: mintTxHash } = useWriteContract();
@@ -58,7 +52,7 @@ function Index() {
   if (mintReceipt.isSuccess) {
     refetch();
   }
-  console.log(data);
+
   return (
     <div className="container mx-auto p-6 bg-gray-300">
       <div className="text-center mb-5 bg-sky-300">
@@ -67,13 +61,15 @@ function Index() {
         </button>
         <p className="flex-1">您已拥有{data && data[0]?.result?.toString()}个该系列的NFT</p>
       </div>
-      <div className="grid grid-cols-4 gap-4">
-        {data &&
-          data[1].result?.length &&
-          data[1].result.map(i => {
+      {data && data[1]?.result?.length ? (
+        <div className="grid grid-cols-4 gap-4">
+          {data[1].result.map(i => {
             return <Item tokenId={i} refetchStatus={refetchStatus} key={i} />;
           })}
-      </div>
+        </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 }

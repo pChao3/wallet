@@ -3,18 +3,7 @@ import { useEffect, useCallback, useState } from 'react';
 import { useWriteContract, useAccount, useWaitForTransactionReceipt } from 'wagmi';
 
 import { NFTAddress, MarketAddress } from '../addressConfig';
-import NFTABI from '../../contract/NFT_ABI.json';
-import MARKETABI from '../../contract/Market_ABI.json';
-
-const nftContract = {
-  abi: NFTABI.abi,
-  address: NFTAddress,
-};
-const marketContract = {
-  abi: MARKETABI.abi,
-  address: MarketAddress,
-};
-
+import { nftContract, marketContract } from './config';
 function Item({ tokenId, refetchStatus }) {
   const [price, setPrice] = useState('');
 
@@ -24,8 +13,8 @@ function Item({ tokenId, refetchStatus }) {
 
   const { writeContractAsync: transferNFT, data: transferTxHash } = useWriteContract();
 
-  // 上架 市场合约
-  // 先授权
+  // 上架流程1.2.3
+  // 1.先授权
   const list = async () => {
     approveNFT({
       ...nftContract,
@@ -33,6 +22,7 @@ function Item({ tokenId, refetchStatus }) {
       args: [MarketAddress, tokenId],
     });
   };
+  // 2.上架NFT
   const approveReceipt = useWaitForTransactionReceipt({ hash: approveTxHash });
   useEffect(() => {
     if (approveReceipt.isSuccess) {
@@ -40,17 +30,23 @@ function Item({ tokenId, refetchStatus }) {
         ...marketContract,
         functionName: 'list',
         args: [NFTAddress, tokenId, price],
-      }).then(() => {
-        transferNFT({
-          ...NFTAddress,
-          functionName: 'transfer',
-          args: [address, NFTAddress, tokenId],
-        });
       });
     }
   }, [approveReceipt.isSuccess]);
 
-  const transferNFTReceipt = useWaitForTransactionReceipt({ hash: transferTxHash }); //上架
+  // 3.更新状态
+  const listNFTReceipt = useWaitForTransactionReceipt({ hash: listNFTTxHash });
+  useEffect(() => {
+    if (listNFTReceipt.isSuccess) {
+      transferNFT({
+        ...nftContract,
+        functionName: 'transfer1',
+        args: [address, MarketAddress, tokenId],
+      });
+    }
+  }, [listNFTReceipt.isSuccess]);
+
+  const transferNFTReceipt = useWaitForTransactionReceipt({ hash: transferTxHash });
 
   if (transferNFTReceipt.isSuccess) {
     refetchStatus();
