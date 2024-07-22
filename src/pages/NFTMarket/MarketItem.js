@@ -17,13 +17,6 @@ function MarketItem({ tokenId, refetchNFT }) {
     args: [NFTAddress, tokenId],
   });
 
-  const owner = useReadContract({
-    ...nftContract,
-    functionName: 'ownerOf',
-    args: [tokenId],
-  });
-  console.log('owner', owner);
-
   const downNFT = async () => {
     await downNFTAsync({
       ...marketContract,
@@ -84,28 +77,30 @@ function MarketItem({ tokenId, refetchNFT }) {
   }, [buyNFTReceipt.isSuccess]);
 
   const isOwner = useMemo(() => {
-    return address == owner.data;
-  }, [address, owner.data]);
+    return address == data[1];
+  }, [address, data[1]]);
+
   return (
     <div className="w-full h-48 text-center bg-sky-200 " key={tokenId}>
       <h1>seller: {data && data[1]}</h1>
       <h1>tokenId: {Number(tokenId)}</h1>
       <h1>price: {data && Number(data[0])}</h1>
 
-      {isOwner && (
+      {isOwner ? (
         <button
           onClick={() => downNFT()}
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           下架
         </button>
+      ) : (
+        <button
+          onClick={() => buyNFT(tokenId)}
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          购买
+        </button>
       )}
-      <button
-        onClick={() => buyNFT(tokenId)}
-        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-      >
-        购买
-      </button>
     </div>
   );
 }
