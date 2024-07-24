@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .card {
+    @apply w-full h-full text-center flex flex-col bg-sky-200 p-4 rounded-lg relative  cursor-pointer overflow-hidden pb-10;
+  }
+
+  .bottom-input {
+    @apply grid grid-cols-3 absolute -bottom-8 transition ease-in-out delay-150  group-hover:-translate-y-10;
+  }
+  .btn {
+    @apply rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+  }
+}

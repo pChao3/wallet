@@ -1,9 +1,10 @@
 import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from 'wagmi';
 import { marketContract, nftContract, AirContract } from './config';
 import { NFTAddress, MarketAddress, AirToken } from '../addressConfig';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 function MarketItem({ tokenId, refetchNFT }) {
+  const [imageURL, setImageURL] = useState('');
   const {} = useReadContract({});
   const { address } = useAccount();
 
@@ -16,6 +17,24 @@ function MarketItem({ tokenId, refetchNFT }) {
     functionName: 'nftList',
     args: [NFTAddress, tokenId],
   });
+
+  // 获取NFT图像
+  const uriInfo = useReadContract({
+    ...nftContract,
+    functionName: 'tokenURI',
+    args: [tokenId],
+  });
+
+  useEffect(() => {
+    if (uriInfo.data) {
+      fetch(uriInfo.data)
+        .then(response => response.json())
+        .then(res => {
+          const hash = res.image.split('//')[1];
+          setImageURL(`https://ipfs.io/ipfs/${hash}`);
+        });
+    }
+  }, [uriInfo.data]);
 
   const downNFT = async () => {
     await downNFTAsync({
@@ -83,23 +102,18 @@ function MarketItem({ tokenId, refetchNFT }) {
   }, [address, data]);
 
   return (
-    <div className="w-full h-48 text-center bg-sky-200 " key={tokenId}>
+    <div className="card " key={tokenId}>
+      <img src={imageURL} className="w-full h-full" />
       <h1>seller: {data && data[1]}</h1>
-      <h1>tokenId: {Number(tokenId)}</h1>
       <h1>price: {data && Number(data[0])}</h1>
+      <h1># {Number(tokenId)}</h1>
 
       {isOwner ? (
-        <button
-          onClick={() => downNFT()}
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
+        <button onClick={() => downNFT()} className="btn">
           下架
         </button>
       ) : (
-        <button
-          onClick={() => buyNFT(tokenId)}
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
+        <button onClick={() => buyNFT(tokenId)} className="btn">
           购买
         </button>
       )}
