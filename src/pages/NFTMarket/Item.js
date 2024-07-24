@@ -1,17 +1,37 @@
 import { useEffect, useCallback, useState } from 'react';
 
-import { useWriteContract, useAccount, useWaitForTransactionReceipt } from 'wagmi';
+import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 
 import { NFTAddress, MarketAddress } from '../addressConfig';
 import { nftContract, marketContract } from './config';
 function Item({ tokenId, refetchStatus }) {
   const [price, setPrice] = useState('');
+  const [imageURL, setImageIRL] = useState('');
 
   const { address } = useAccount();
   const { writeContractAsync: listNFT, data: listNFTTxHash } = useWriteContract();
   const { writeContractAsync: approveNFT, data: approveTxHash } = useWriteContract();
 
   const { writeContractAsync: transferNFT, data: transferTxHash } = useWriteContract();
+
+  // 获取uri
+  const uriInfo = useReadContract({
+    ...nftContract,
+    functionName: 'tokenURI',
+    args: [tokenId],
+  });
+  useEffect(() => {
+    if (uriInfo.data) {
+      fetch(uriInfo.data)
+        .then(response => {
+          return response.json();
+        })
+        .then(res => {
+          const hash = res.image.split('//')[1];
+          setImageIRL(`https://ipfs.io/ipfs/${hash}`);
+        });
+    }
+  }, [uriInfo.data]);
 
   // 上架流程1.2.3
   // 1.先授权
@@ -53,12 +73,14 @@ function Item({ tokenId, refetchStatus }) {
   }
   return (
     <div>
-      <div className="w-full h-48 text-center flex flex-col bg-sky-200 p-4">
-        <div className="flex-1 mb-2">tokenId:{Number(tokenId)}</div>
-        <div className="grid grid-cols-3">
+      <div className="card group">
+        <img src={imageURL} className="w-full h-full"></img>
+        <div className="absolute">#{Number(tokenId)}</div>
+
+        <div className="bottom-input">
           <div className="col-span-2">
             <label>price:</label>
-            <input value={price} onChange={e => setPrice(e.target.value)} />
+            <input className="rounded-md" value={price} onChange={e => setPrice(e.target.value)} />
           </div>
           <button onClick={list}>上架</button>
         </div>
