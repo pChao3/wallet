@@ -77,12 +77,16 @@ function Item({ tokenId, refetchStatus }) {
         <img src={imageURL} className="w-full h-full"></img>
         <div className="absolute">#{Number(tokenId)}</div>
 
-        <div className="bottom-input">
-          <div className="col-span-2">
-            <label>price:</label>
-            <input className="rounded-md" value={price} onChange={e => setPrice(e.target.value)} />
-          </div>
-          <button onClick={list}>上架</button>
+        <div className="bottom-input grid ">
+          <label className="col-span-1 ">price: </label>
+          <input
+            className="rounded-md col-span-2 indent-1.5"
+            value={price}
+            onChange={e => setPrice(e.target.value)}
+          />
+          <button onClick={list} className="col-span-1 ">
+            上架
+          </button>
         </div>
       </div>
     </div>
