@@ -50,7 +50,7 @@ function Index() {
     refetchNFT();
   };
   return (
-    <div className="container mx-auto p-6 bg-gray-300">
+    <div className="container mx-auto p-6 bg-gray-300 rounded-2xl">
       <p>you have {data?.toString()} $Air</p>
       <p>NFT-Market already have {nftCount && nftCount[0]?.result?.toString()} NFTs </p>
       {nftCount && nftCount[1]?.result?.length ? (

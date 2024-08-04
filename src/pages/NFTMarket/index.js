@@ -18,7 +18,7 @@ const options = [
 function Index() {
   const [value, setValue] = useState(1);
   return (
-    <div className="text-center">
+    <div className="text-center mt-10 ">
       <Radio.Group
         options={options}
         onChange={k => setValue(k.target.value)}
