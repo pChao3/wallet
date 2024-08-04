@@ -39,7 +39,7 @@
 
 .layout-content {
   height: calc(100vh - 48px);
-  background-color: #bdbdbd;
+  /* background-color: #bdbdbd; */
 
   display: flex;
   justify-content: center;
