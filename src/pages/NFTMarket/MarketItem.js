@@ -105,7 +105,7 @@ function MarketItem({ tokenId, refetchNFT }) {
     <div className="card " key={tokenId}>
       <img src={imageURL} className="w-full h-full" />
       <h1>seller: {data && data[1]}</h1>
-      <h1>price: {data && Number(data[0])}</h1>
+      <h1>price: {data && Number(data[0])} $Air</h1>
       <h1># {Number(tokenId)}</h1>
 
       {isOwner ? (

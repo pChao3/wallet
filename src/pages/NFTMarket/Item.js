@@ -74,7 +74,10 @@ function Item({ tokenId, refetchStatus }) {
   return (
     <div>
       <div className="card group">
-        <img src={imageURL} className="w-full h-full"></img>
+        <img
+          src={imageURL}
+          className="w-full h-full scale-95 group-hover:scale-100 duration-300"
+        ></img>
         <div className="absolute">#{Number(tokenId)}</div>
 
         <div className="bottom-input grid ">
@@ -84,7 +87,8 @@ function Item({ tokenId, refetchStatus }) {
             value={price}
             onChange={e => setPrice(e.target.value)}
           />
-          <button onClick={list} className="col-span-1 ">
+          <span className="-ml-4">$Air</span>
+          <button onClick={list} className="col-span-1 hover:text-blue-800 hover:font-bold">
             上架
           </button>
         </div>
