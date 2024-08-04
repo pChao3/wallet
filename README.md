@@ -14,3 +14,5 @@ todo: 显示NFT的URI及页面美化？✅
 
 2024.7.24 -- show NFT image（抽离tailwindcss,展示NFT image)
 上架，购买时每次都进行三次交互？🤔️ （授权、交易、更新状态） todo:优化合约代码？
+
+2024.8.4 -- 样式优化调整，增加背景canvas动画
