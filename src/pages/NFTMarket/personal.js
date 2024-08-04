@@ -62,7 +62,7 @@ function Index() {
         <p className="flex-1">您已拥有{data && data[0]?.result?.toString()}个该系列的NFT</p>
       </div>
       {data && data[1]?.result?.length ? (
-        <div className="grid grid-cols-4 gap-4 h-96 overflow-y-scroll">
+        <div className="grid grid-cols-4 gap-4 h-[38rem] overflow-y-scroll">
           {data[1].result.map(i => {
             return <Item tokenId={i} refetchStatus={refetchStatus} key={i} />;
           })}
