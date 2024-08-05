@@ -1,3 +1,4 @@
+export const NameAddress = '0x0836Cb07da51a8d3383275BBD2C9B6F02dA019B0'; // Name address
 export const walletAddress = '0x9A84da3EF2145Af8dCA02379Aa934e6F859fcB23'; // wallet contract address
 
 export const AirToken = '0x0eCEB4cd5087e477dc068a7B5694EB0fc74FA079'; //air token address

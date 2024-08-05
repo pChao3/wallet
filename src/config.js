@@ -1,8 +1,8 @@
 import { http, createConfig } from 'wagmi';
-import { sepolia, localhost } from 'wagmi/chains';
+import { sepolia, localhost, hardhat } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 export const config = createConfig({
-  chains: [localhost, sepolia],
+  chains: [localhost, sepolia, hardhat],
   connectors: [
     injected({
       target: 'metamask',
@@ -10,6 +10,6 @@ export const config = createConfig({
   ],
   transports: {
     [sepolia.id]: http(),
-    [localhost.id]: http('http://127.0.0.1:8545/'),
+    [hardhat.id]: http('http://127.0.0.1:8545/'),
   },
 });

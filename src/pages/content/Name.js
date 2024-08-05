@@ -1,20 +1,14 @@
 import { message } from 'antd';
-import contractJson from '../../contract/contract.json';
+import NameJson from '../../contract/name.json';
 import { useState, useEffect, useCallback } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
 import './Name.css';
-const contractAddress = '0x0836Cb07da51a8d3383275BBD2C9B6F02dA019B0';
+import { NameAddress } from '../addressConfig';
 function Name() {
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
   const { data, refetch } = useReadContract({
-    abi: contractJson.abi,
-    address: contractAddress,
-    functionName: 'getName',
-  });
-
-  const t = useReadContract({
-    abi: contractJson.abi,
-    address: contractAddress,
+    abi: NameJson.abi,
+    address: NameAddress,
     functionName: 'getName',
   });
 
@@ -31,10 +25,12 @@ function Name() {
       return;
     }
     writeContractAsync({
-      abi: contractJson.abi,
-      address: contractAddress,
+      abi: NameJson.abi,
+      address: NameAddress,
       functionName: 'changeName',
       args: [value],
+    }).then(() => {
+      setValue('');
     });
   }, [value, isConnected]);
 
@@ -43,12 +39,18 @@ function Name() {
     refetch();
   }
   return (
-    <div>
+    <div className="text-center">
       {address && <p>address:{address}</p>}
-      <div className="input-box">
+      <div className="mt-4">
+        <p className="text-4xl">what's your name ?</p>
         <span>name:{data === '' ? '暂无数据' : data}</span>
         <div>
-          <input onChange={e => setValue(e.target.value)} placeholder="write your name" />
+          <input
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="write your name"
+            className="bg-transparent border"
+          />
           <button onClick={handleChange}>修改</button>
         </div>
       </div>
