@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Name from '../../component/components/Name';
+import Name from './Name';
 import './Content.css';
 function ContentLayout() {
   return (
