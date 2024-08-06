@@ -17,6 +17,10 @@ function Withdraw() {
       address: walletAddress,
       functionName: 'withDraw',
       args: [withDrawValue],
+    }).catch(err => {
+      console.log(err);
+      message.error(err.name);
+      setLoading(false);
     });
   };
 
@@ -29,8 +33,8 @@ function Withdraw() {
   });
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
 
-  if (isSuccess && loading) {
-    setLoading(false);
+  if (isSuccess) {
+    loading && setLoading(false);
     refetch();
     message.success('withDraw success!');
   }

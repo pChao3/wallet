@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Button } from 'antd';
 import NameJson from '../../contract/name.json';
 import { useState, useEffect, useCallback } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt, useAccount } from 'wagmi';
@@ -6,6 +6,7 @@ import './Name.css';
 import { NameAddress } from '../addressConfig';
 function Name() {
   const [value, setValue] = useState('');
+  const [loading, setLoading] = useState(false);
   const { data, refetch } = useReadContract({
     abi: NameJson.abi,
     address: NameAddress,
@@ -24,18 +25,25 @@ function Name() {
     if (!value) {
       return;
     }
+    setLoading(true);
     writeContractAsync({
       abi: NameJson.abi,
       address: NameAddress,
       functionName: 'changeName',
       args: [value],
-    }).then(() => {
-      setValue('');
-    });
+    })
+      .then(() => {
+        setValue('');
+      })
+      .catch(error => {
+        console.log('error', error);
+        setLoading(false);
+      });
   }, [value, isConnected]);
 
   const res = useWaitForTransactionReceipt({ hash });
   if (res.isSuccess) {
+    loading && setLoading(false);
     refetch();
   }
   return (
@@ -51,7 +59,15 @@ function Name() {
             placeholder="write your name"
             className="bg-transparent border"
           />
-          <button onClick={handleChange}>修改</button>
+          <Button
+            onClick={handleChange}
+            loading={loading}
+            size="small"
+            type="primary"
+            className="ml-2"
+          >
+            修改
+          </Button>
         </div>
       </div>
     </div>

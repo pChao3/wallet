@@ -4,11 +4,13 @@ import {
   useAccount,
   useWaitForTransactionReceipt,
 } from 'wagmi';
-
 import { nftContract } from './config';
 import Item from './Item';
+import { Button } from 'antd';
+import { useState } from 'react';
 
 function Index() {
+  const [loading, setLoading] = useState(false);
   const { writeContractAsync: mint, data: mintTxHash } = useWriteContract();
 
   const { address } = useAccount();
@@ -30,6 +32,7 @@ function Index() {
 
   // mint NFT
   const mintNFT = () => {
+    setLoading(true);
     mint({
       ...nftContract,
       functionName: 'createNFT',
@@ -39,6 +42,9 @@ function Index() {
       })
       .catch(error => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -56,9 +62,9 @@ function Index() {
   return (
     <div className="container mx-auto p-6 bg-gray-300  rounded-xl">
       <div className="text-center mb-5 bg-sky-300 rounded-md">
-        <button className="flex-1  btn" onClick={() => mintNFT()}>
+        <Button onClick={() => mintNFT()} type="primary" loading={loading}>
           click to mint
-        </button>
+        </Button>
         <p className="flex-1">您已拥有{data && data[0]?.result?.toString()}个该系列的NFT</p>
       </div>
       {data && data[1]?.result?.length ? (

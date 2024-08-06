@@ -31,12 +31,16 @@ function Deposit() {
       address: walletAddress,
       functionName: 'deposit',
       value: parseEther(depositValue),
+    }).catch(err => {
+      console.log(err);
+      message.error(err.name);
+      setLoading(false);
     });
   };
 
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
-  if (isSuccess && loading) {
-    setLoading(false);
+  if (isSuccess) {
+    loading && setLoading(false);
     refetch();
     message.success('deposit success!');
   }

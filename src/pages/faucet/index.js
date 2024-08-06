@@ -6,6 +6,7 @@ import { faucetAddress } from '../addressConfig';
 import faucetAbi from '../../contract/faucet.json';
 
 function Faucet() {
+  const [loading, setLoading] = useState(false);
   const [targetAddress, setTargetAddress] = useState('');
   const { isConnected, address } = useAccount();
 
@@ -22,20 +23,27 @@ function Faucet() {
       message.error('请连接您的钱包！');
       return;
     }
+    setLoading(true);
     writeContractAsync({
       abi: faucetAbi.abi,
       address: faucetAddress,
       functionName: 'getToken',
       args: [targetAddress],
     }).catch(error => {
-      message.info('您当天已经领取过AirToken了,请24小时之后再进行尝试!');
-      console.log('error', error);
+      if (error.name == 'InvalidAddressError') {
+        message.error(error.name);
+      } else {
+        message.info('您当天已经领取过AirToken了,请24小时之后再进行尝试!');
+        console.log('error', error);
+      }
+      setLoading(false);
     });
   };
 
   const { isSuccess } = useWaitForTransactionReceipt({ hash });
   if (isSuccess) {
     message.success('you has received $10000 Air token!');
+    loading && setLoading(false);
     refetch();
   }
 
@@ -45,7 +53,7 @@ function Faucet() {
         <p>$Air faucet </p>
         <p>balance:{data && data.toString()}</p>
         <Input addonBefore="address" onChange={e => setTargetAddress(e.target.value)} />
-        <Button type="primary" onClick={() => getToken()}>
+        <Button type="primary" onClick={() => getToken()} loading={loading}>
           get $Air token
         </Button>
       </div>
