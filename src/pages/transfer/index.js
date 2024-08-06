@@ -16,6 +16,7 @@ import { AirToken } from '../addressConfig';
 function Wallet() {
   const [amount, setAmount] = useState(0);
   const [toAddress, setAddress] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const { isConnected, address } = useAccount();
   const { writeContractAsync, data: hash } = useWriteContract();
@@ -33,11 +34,16 @@ function Wallet() {
       return;
     }
     // transfer
+    setLoading(true);
     writeContractAsync({
       abi: AirTokenAbi.abi,
       address: AirToken,
       functionName: 'transfer',
       args: [toAddress, amount * 10 ** 18],
+    }).catch(err => {
+      console.log(err);
+      message.error(err.name);
+      setLoading(false);
     });
   };
 
@@ -45,6 +51,7 @@ function Wallet() {
   if (isSuccess) {
     message.success('转账成功！');
     refetch();
+    loading && setLoading(false);
   }
 
   return (
@@ -58,7 +65,7 @@ function Wallet() {
             <Input onChange={e => setAmount(e.target.value)} />
             <span>Address:{}</span>
             <Input onChange={e => setAddress(e.target.value)} />
-            <Button type="primary" block onClick={() => transfer()}>
+            <Button type="primary" block onClick={() => transfer()} loading={loading}>
               Transfer
             </Button>
           </div>
