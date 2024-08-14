@@ -5,6 +5,8 @@ import Transfer from '../pages/transfer'; // transfer
 import Wallet from '../pages/wallet'; // wallet
 import NFTMarket from '../pages/NFTMarket/index';
 
+import UnoSwap from '../pages/unoSwap/index';
+
 export default [
   {
     path: '/',
@@ -30,6 +32,10 @@ export default [
       {
         path: 'NFTMarket',
         element: <NFTMarket />,
+      },
+      {
+        path: 'UnoSwap',
+        element: <UnoSwap />,
       },
       //   {
       //     path: 'navigate',
