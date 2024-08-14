@@ -18,3 +18,6 @@ todo: 显示NFT的URI及页面美化？✅
 2024.8.4 -- 样式优化调整，增加背景canvas动画
 
 2024.8.6 -- add button loading status, catch error
+
+2024.8.14 -- 1.新增 $Water 水龙头按钮 （与$Air提供交易对）
+             2.新增 “UnoSwap” 去中心化交易模块
