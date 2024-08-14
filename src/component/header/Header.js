@@ -27,6 +27,10 @@ const navs = [
     name: 'NFT-Market',
     url: '/NFTMarket',
   },
+  {
+    name: 'UnoSwap',
+    url: '/UnoSwap',
+  },
 ];
 
 function Header() {
