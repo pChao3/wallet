@@ -21,3 +21,9 @@ todo: 显示NFT的URI及页面美化？✅
 
 2024.8.14 -- 1.新增 $Water 水龙头按钮 （与$Air提供交易对）
              2.新增 “UnoSwap” 去中心化交易模块
+#### 新增 webWallet
+**todolist:**  
+**一.创建账户**  
+  1.通过助记词方式创建钱包(使用bip39创建助记词)  
+  2.加盐Salt（密码)  
+  （直接使用ethers的wallet添加助记词创建钱包对象的话， 没办法添加Salt, 利用ethereumjs-wallet 和 ethereumjs-util 可以进行加盐操作， 参考：[https://learnblockchain.cn/2018/09/28/hdwallet/]）
