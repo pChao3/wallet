@@ -1,5 +1,6 @@
 import App from '../App'; //正常加载方式
 import ContentLayout from '../pages/content/Content'; //name
+import WebWallet from '../pages/webWallet';
 import Faucet from '../pages/faucet';
 import Transfer from '../pages/transfer'; // transfer
 import Wallet from '../pages/wallet'; // wallet
@@ -13,9 +14,13 @@ export default [
     element: <App />,
 
     children: [
+      // {
+      //   index: true,
+      //   element: <ContentLayout />,
+      // },
       {
         index: true,
-        element: <ContentLayout />,
+        element: <WebWallet />,
       },
       {
         path: 'faucet',
