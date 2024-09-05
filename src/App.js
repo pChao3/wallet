@@ -5,6 +5,7 @@ import './App.css';
 
 import Header from './component/header/Header';
 import { Outlet } from 'react-router-dom';
+import { PasswordProvider } from './Context/index.js';
 
 const queryClient = new QueryClient();
 
@@ -12,10 +13,12 @@ function App() {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <Header />
-        <div className="layout-content">
-          <Outlet />
-        </div>
+        <PasswordProvider>
+          <Header />
+          <div className="layout-content">
+            <Outlet />
+          </div>
+        </PasswordProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

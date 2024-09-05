@@ -1,11 +1,17 @@
 import { Button, Input } from 'antd';
+import { ethers } from 'ethers';
 import { useState } from 'react';
+import { usePassword } from '../../Context';
 function Generate() {
   const [show, setShow] = useState(false);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
+  const { password } = usePassword();
 
   const exportKeyStore = async () => {
-    const keyJson = await window.account.encrypt('aaa');
+    const keyfile = localStorage.getItem('keyFile');
+    const wallet = await ethers.Wallet.fromEncryptedJson(keyfile, password);
+
+    const keyJson = await wallet.encrypt(value);
     const blob = new Blob([keyJson], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
