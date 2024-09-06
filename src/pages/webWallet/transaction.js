@@ -6,12 +6,12 @@ import useWallet, { provider } from '../../util/walletUtils';
 function TransModule() {
   const [toAddress, setToAddress] = useState();
   const [amount, setAmount] = useState('');
-  const { wallet, address } = useWallet();
+  const { wallet } = useWallet();
   const transfer = async () => {
     const signer = await wallet.connect(provider);
     try {
       const tx = await signer.sendTransaction({
-        to: address,
+        to: toAddress,
         value: ethers.parseUnits(amount),
       });
       console.log('tx', tx);
