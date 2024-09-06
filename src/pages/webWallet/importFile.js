@@ -4,7 +4,7 @@ import { useState } from 'react';
 import * as ethers from 'ethers';
 import { usePassword } from '../../Context';
 
-function ImportJsonFile() {
+function ImportJsonFile({ onNext }) {
   const [password, setPassWord] = useState('');
   const [fileList, setFileList] = useState();
 
@@ -30,6 +30,7 @@ function ImportJsonFile() {
         console.log('wallet', wallet);
         message.success('导入成功！');
         setLoading(false);
+        onNext(2);
 
         // todo: router or other things!
       } catch (error) {

@@ -7,6 +7,9 @@ module.exports = function override(config, env) {
     buffer: require.resolve('buffer/'),
     process: require.resolve('process/browser'),
     assert: require.resolve('assert/'),
+    os: require.resolve('os-browserify/browser'),
+    // dotenv: require.resolve('dotenv'),
+    path: require.resolve('path-browserify'),
   };
 
   config.plugins = (config.plugins || []).concat([
