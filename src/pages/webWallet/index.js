@@ -12,7 +12,7 @@ import TransModule from './transaction';
 // 3.导入keyStore文件
 
 function WebWallet() {
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
   return (
     <div className="text-black text-2xl w-1/3 text-center bg-white p-4">
       {page === 1 && (
