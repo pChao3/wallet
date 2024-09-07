@@ -17,7 +17,7 @@ function WebWallet() {
     <div className="text-black text-2xl w-1/3 text-center bg-white p-4">
       {page === 1 && (
         <div>
-          <GenerateWallet />
+          <GenerateWallet onNext={setPage} />
           <hr className="mt-4 mb-4" />
           <ImportFile onNext={setPage} />
           <hr className="mt-4 mb-4" />
@@ -28,6 +28,7 @@ function WebWallet() {
         <div>
           <AccountInfo />
           <TransModule />
+          <Button onClick={() => setPage(1)}>返回</Button>
         </div>
       )}
     </div>
