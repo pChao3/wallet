@@ -11,16 +11,15 @@ function useWallet() {
   const [wallet, setWallet] = useState();
   const [address, setAddress] = useState(0);
   useEffect(() => {
+    if (!password) return;
     const keyFile = localStorage.getItem('keyFile');
     const loadWallet = async () => {
       const wallet = await ethers.Wallet.fromEncryptedJson(keyFile, password);
-      const signer = await wallet.connect(provider);
-      console.log(wallet, 'lll', signer);
       setWallet(wallet);
       setAddress(wallet.address);
     };
     loadWallet();
-  }, []);
+  }, [password]);
 
   return { wallet, address };
 }
