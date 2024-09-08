@@ -5,10 +5,10 @@ import * as ethers from 'ethers';
 import { usePassword } from '../../Context';
 
 function ImportJsonFile({ onNext }) {
-  const [password, setPassWord] = useState('');
+  const [value, setValue] = useState('');
   const [fileList, setFileList] = useState();
 
-  const { setPassword } = usePassword();
+  const { password } = usePassword();
 
   const [loading, setLoading] = useState(false);
 
@@ -24,10 +24,11 @@ function ImportJsonFile({ onNext }) {
     const reader = new FileReader();
     reader.onload = async function (e) {
       try {
-        const wallet = await ethers.Wallet.fromEncryptedJson(e.target.result, password);
-        setPassword(password); // 设置全局状态
-        localStorage.setItem('keyFile', e.target.result);
-        console.log('wallet', wallet);
+        const wallet = await ethers.Wallet.fromEncryptedJson(e.target.result, value);
+        const keyFile = await wallet.encrypt(password);
+        const accounts = JSON.parse(localStorage.getItem('keyFiles'));
+        accounts.push(keyFile);
+        localStorage.setItem('keyFiles', JSON.stringify(accounts));
         message.success('导入成功！');
         setLoading(false);
         onNext(2);
@@ -65,8 +66,8 @@ function ImportJsonFile({ onNext }) {
       <Input
         placeholder="验证密码"
         className="w-1/3"
-        value={password}
-        onChange={e => setPassWord(e.target.value)}
+        value={value}
+        onChange={e => setValue(e.target.value)}
       />
       <Button onClick={importJson} loading={loading}>
         导入
