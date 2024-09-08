@@ -23,12 +23,29 @@ function Generate({ onNext }) {
     const account = new ethers.Wallet(privateKey);
     const keyFile = await account.encrypt(value);
 
-    localStorage.setItem('keyFile', keyFile);
+    localStorage.setItem('keyFiles', JSON.stringify([keyFile]));
     setPassword(value);
     message.success('generate wallet success!');
     onNext(2);
   };
 
+  // 登陆
+  const login = async () => {
+    const keyFile = getAccounts()[0];
+    try {
+      console.log(keyFile);
+      await ethers.Wallet.fromEncryptedJson(keyFile, value);
+      setPassword(value);
+      onNext(2);
+    } catch (error) {
+      console.log(error);
+      message.error('密码错误!');
+    }
+  };
+
+  const getAccounts = () => {
+    return JSON.parse(localStorage.getItem('keyFiles'));
+  };
   return (
     <div className="w-1/2 m-auto">
       <Input.Password
@@ -40,7 +57,11 @@ function Generate({ onNext }) {
           onVisibleChange: setShow,
         }}
       />
-      <Button onClick={generate}>生成钱包账户</Button>
+      {getAccounts()?.length ? (
+        <Button onClick={login}>登陆</Button>
+      ) : (
+        <Button onClick={generate}>生成钱包账户</Button>
+      )}
     </div>
   );
 }

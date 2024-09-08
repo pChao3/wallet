@@ -6,13 +6,13 @@ const API_KEY = '3fc6c894f35a4458839f899be37925af';
 // console.log(process.env);
 export const provider = new ethers.JsonRpcProvider(`https://sepolia.infura.io/v3/${API_KEY}`);
 
-function useWallet() {
+function useWallet(index) {
   const { password } = usePassword();
   const [wallet, setWallet] = useState();
   const [address, setAddress] = useState(0);
   useEffect(() => {
     if (!password) return;
-    const keyFile = localStorage.getItem('keyFile');
+    const keyFile = JSON.parse(localStorage.getItem('keyFiles'))[index || 0];
     const loadWallet = async () => {
       const wallet = await ethers.Wallet.fromEncryptedJson(keyFile, password);
       setWallet(wallet);
