@@ -18,10 +18,10 @@ function WebWallet() {
       {page === 1 && (
         <div>
           <GenerateWallet onNext={setPage} />
-          <hr className="mt-4 mb-4" />
+          {/* <hr className="mt-4 mb-4" />
           <ImportFile onNext={setPage} />
           <hr className="mt-4 mb-4" />
-          <ExportFile />
+          <ExportFile /> */}
         </div>
       )}
       {page === 2 && (

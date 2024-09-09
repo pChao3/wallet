@@ -1,40 +1,65 @@
-import { Button, Input, message } from 'antd';
+import { Button, Input, message, Spin } from 'antd';
 import { useState } from 'react';
 import * as ethers from 'ethers';
 import { usePassword } from '../../Context';
+import { encryptData } from '../../util/securityUtils';
+import { provider } from '../../util/walletUtils';
+
 const bip39 = require('bip39');
 const { hdkey } = require('ethereumjs-wallet');
 
-const path = "m/44'/60'/0'/0/0";
 function Generate({ onNext }) {
   const [show, setShow] = useState(false);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState('');
+  const [mnemonic, setMnemonic] = useState();
+  const [loading, setLoading] = useState(false);
+
   const { setPassword } = usePassword();
   const generate = async () => {
-    // 生成助记词 (128 + 4 / 11 => 助记词)
-    const mnemonic = bip39.generateMnemonic();
-    // 生成种子 (助记词和盐+密码 => 进行KDF拉伸(HMAC-SHA512) 2048次 => 512位的值 seed)
-    const seed = await bip39.mnemonicToSeed(mnemonic, value);
-    // 生成钱包 (seed传入HMAC-SHA512函数 => {左边256位为主私钥(主公钥可以通过主私钥生成)，右边256位为主链码} => （主私钥/主公钥 主链码 索引) 传入HMAC-SHA512 => 生成子私钥，子链码 )
-    const HDKeyWallet = hdkey.fromMasterSeed(seed).derivePath(path);
-    console.log('what is HDKeyWallet', HDKeyWallet);
-    const privateKey = HDKeyWallet._hdkey.privateKey.toString('hex');
-    console.log('privateKey', privateKey);
-    const account = new ethers.Wallet(privateKey);
-    const keyFile = await account.encrypt(value);
+    setLoading(true);
+    try {
+      let currentIndex = localStorage.getItem('currentIndex') || 0;
 
-    localStorage.setItem('keyFiles', JSON.stringify([keyFile]));
-    setPassword(value);
-    message.success('generate wallet success!');
-    onNext(2);
+      // 生成助记词 (128 + 4 / 11 => 助记词)
+      const mnemonic = bip39.generateMnemonic();
+      setMnemonic(mnemonic);
+      // console.log('mnemonic', mnemonic);
+      // 生成种子 (助记词和盐+密码 => 进行KDF拉伸(HMAC-SHA512) 2048次 => 512位的值 seed)
+      const seed = await bip39.mnemonicToSeed(mnemonic, value);
+
+      // 生成钱包 (seed传入HMAC-SHA512函数 => {左边256位为主私钥(主公钥可以通过主私钥生成)，右边256位为主链码} => （主私钥/主公钥 主链码 索引) 传入HMAC-SHA512 => 生成子私钥，子链码 )
+      const HDKeyWallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0/${currentIndex}`);
+      console.log('what is HDKeyWallet', HDKeyWallet);
+      const privateKey = HDKeyWallet._hdkey.privateKey.toString('hex');
+      console.log('privateKey', privateKey);
+      const account = new ethers.Wallet(privateKey);
+      const keyFile = await account.encrypt(value);
+      const balance = await provider.getBalance(account.address);
+      const accountInfo = {
+        address: account.address,
+        balance: ethers.formatEther(balance),
+        name: `Account${currentIndex}`,
+        jsonStore: keyFile,
+      };
+
+      currentIndex++;
+      localStorage.setItem('currentIndex', currentIndex);
+      localStorage.setItem('encryptSeed', encryptData(seed.toString('hex'), value));
+      localStorage.setItem('keyFiles', JSON.stringify([accountInfo]));
+      setPassword(value);
+      message.success('generate wallet success!');
+      // onNext(2);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 登陆
   const login = async () => {
     const keyFile = getAccounts()[0];
     try {
-      console.log(keyFile);
-      await ethers.Wallet.fromEncryptedJson(keyFile, value);
+      await ethers.Wallet.fromEncryptedJson(keyFile.jsonStore, value);
       setPassword(value);
       onNext(2);
     } catch (error) {
@@ -60,7 +85,23 @@ function Generate({ onNext }) {
       {getAccounts()?.length ? (
         <Button onClick={login}>登陆</Button>
       ) : (
-        <Button onClick={generate}>生成钱包账户</Button>
+        <Button onClick={generate} disabled={loading}>
+          {loading ? <Spin /> : '生成钱包账户'}
+        </Button>
+      )}
+      {mnemonic && (
+        <div>
+          <h3>您的助记词（请安全保存，不要分享给他人）：</h3>
+          <p>{mnemonic}</p>
+          <Button
+            onClick={() => {
+              setMnemonic('');
+              onNext(2);
+            }}
+          >
+            我已安全保存助记词
+          </Button>
+        </div>
       )}
     </div>
   );
