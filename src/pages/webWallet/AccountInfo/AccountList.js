@@ -1,8 +1,10 @@
 import { ethers } from 'ethers';
 import { usePassword } from '../../../Context';
-import { provider } from '../../../util/walletUtils';
+import { getBalance } from '../../../util/walletUtils';
 import { useEffect, useState } from 'react';
 import { Modal, Button } from 'antd';
+import { decryptData } from '../../../util/securityUtils';
+import { hdkey } from 'ethereumjs-wallet';
 
 function AccountList(props) {
   const { password } = usePassword();
@@ -11,20 +13,9 @@ function AccountList(props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAccountsInfo = async () => {
-    const allAccount = JSON.parse(localStorage.getItem('keyFiles'));
-    const infos = [];
-    for (let i = 0; i < allAccount.length; i++) {
-      const wallet = await ethers.Wallet.fromEncryptedJson(allAccount[i], password);
-      const balance = await provider.getBalance(wallet.address);
-      infos.push({
-        address: wallet.address,
-        balance: ethers.formatEther(balance),
-        name: `Account ${i + 1}`,
-      });
-    }
+    const infos = JSON.parse(localStorage.getItem('keyFiles'));
     props.setCurrentAccount(infos[0]);
     setAccountList(infos);
-    console.log(infos);
   };
   useEffect(() => {
     getAccountsInfo();
@@ -33,6 +24,32 @@ function AccountList(props) {
   const selectAccount = i => {
     props.setCurrentAccount(i);
     setIsModalOpen(false);
+  };
+
+  const addAccount = async () => {
+    let currentIndex = localStorage.getItem('currentIndex');
+
+    const encrySeed = localStorage.getItem('encryptSeed');
+    const seed = decryptData(encrySeed, password);
+    const hdWallet = hdkey
+      .fromMasterSeed(Buffer.from(seed, 'hex'))
+      .derivePath(`m/44'/60'/0'/0/${currentIndex}`);
+
+    const wallet = new ethers.Wallet(hdWallet._hdkey.privateKey.toString('hex'));
+    const jsonStore = await wallet.encrypt(password);
+
+    const accountList = JSON.parse(localStorage.getItem('keyFiles'));
+    const balance = await getBalance(wallet.address);
+    accountList.push({
+      address: wallet.address,
+      balance: balance,
+      name: `Account${currentIndex}`,
+      jsonStore: jsonStore,
+    });
+    currentIndex++;
+    localStorage.setItem('currentIndex', currentIndex);
+    localStorage.setItem('keyFiles', JSON.stringify(accountList));
+    setAccountList(accountList);
   };
   return (
     <div>
@@ -54,6 +71,7 @@ function AccountList(props) {
               </li>
             ))}
         </ul>
+        <Button onClick={addAccount}>添加新账户</Button>
       </Modal>
       <a className="cursor-pointer text-blue-500" onClick={() => setIsModalOpen(true)}>
         +
