@@ -26,4 +26,9 @@ todo: 显示NFT的URI及页面美化？✅
 **一.创建账户**  
   1.通过助记词方式创建钱包(使用bip39创建助记词)  
   2.加盐Salt（密码)  
-  （直接使用ethers的wallet添加助记词创建钱包对象的话， 没办法添加Salt, 利用ethereumjs-wallet 和 ethereumjs-util 可以进行加盐操作， 参考：[https://learnblockchain.cn/2018/09/28/hdwallet/]）
+  （直接使用ethers的wallet添加助记词创建钱包对象的话， 没办法添加Salt, 利用ethereumjs-wallet 和 ethereumjs-util 可以进行加盐操作， 参考：[https://learnblockchain.cn/2018/09/28/hdwallet/]）  
+
+###修改新增账户策略###  
+改为首次登陆时CryptoJS 保存加密seed种子及账户index 密码保存在上下文 content 里和登陆密码一致  
+创建新账户时解密，根据seed种子生成hdWallet,修改路径最后一位为index， index自增。
+
