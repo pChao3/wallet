@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { usePassword } from '../Context';
 import { useEffect, useState } from 'react';
+import useStore from '../store';
 
 const API_KEY = '3fc6c894f35a4458839f899be37925af';
 // console.log(process.env);
@@ -11,21 +12,23 @@ export const getBalance = async address => {
   return ethers.formatEther(balance);
 };
 
-function useWallet(index) {
+function useWallet() {
   const { password } = usePassword();
   const [wallet, setWallet] = useState();
   const [address, setAddress] = useState(0);
+  const { currentAccount } = useStore();
   useEffect(() => {
     if (!password) return;
-    const keyFile = JSON.parse(localStorage.getItem('keyFiles'))[index || 0];
+
+    const keyFile = currentAccount.jsonStore;
     console.log(keyFile);
     const loadWallet = async () => {
-      const wallet = await ethers.Wallet.fromEncryptedJson(keyFile.jsonStore, password);
+      const wallet = await ethers.Wallet.fromEncryptedJson(keyFile, password);
       setWallet(wallet);
       setAddress(wallet.address);
     };
     loadWallet();
-  }, [password]);
+  }, [password, currentAccount]);
 
   return { wallet, address };
 }

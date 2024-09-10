@@ -4,20 +4,16 @@ import useWallet, { provider } from '../../../util/walletUtils';
 import AccountList from './AccountList';
 import 'dotenv/config';
 // const { API_KEY } = process.env;
+import useStore from '../../../store';
 
 function AccountInfo() {
-  const [balance, setBalance] = useState(0);
-  const [address, setAddress] = useState();
+  const { currentAccount } = useStore();
 
-  const setCurrentInfo = i => {
-    setAddress(i.address);
-    setBalance(i.balance);
-  };
   return (
     <div className="text-xl">
-      <AccountList setCurrentAccount={info => setCurrentInfo(info)} />
-      <p>address:{address}</p>
-      <p>balance:{balance} ETH</p>
+      <AccountList />
+      <p>address:{currentAccount.address}</p>
+      <p>balance:{currentAccount.balance} ETH</p>
     </div>
   );
 }

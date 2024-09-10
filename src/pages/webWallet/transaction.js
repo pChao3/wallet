@@ -1,13 +1,18 @@
 import { Input, Form, Button, message } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import useWallet, { provider } from '../../util/walletUtils';
+import useStore from '../../store';
 
 function TransModule() {
-  const [toAddress, setToAddress] = useState();
+  const [toAddress, setToAddress] = useState('0x624FB60F2b3406Db42E164fEBc928a553B0D9eD4');
   const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { setCurrentAccount, currentAccount } = useStore();
   const { wallet } = useWallet();
+
   const transfer = async () => {
+    setLoading(true);
     const signer = await wallet.connect(provider);
     try {
       const tx = await signer.sendTransaction({
@@ -17,9 +22,23 @@ function TransModule() {
       console.log('tx', tx);
       const receipt = await tx.wait();
       console.log(signer, receipt);
-      message.success('transfer success!');
+      message.success('转账成功！');
+      setLoading(false);
+
+      const balance = await provider.getBalance(wallet.address);
+      setCurrentAccount({
+        ...currentAccount,
+        balance: ethers.formatEther(balance),
+      });
     } catch (error) {
-      message.error(error);
+      console.error('交易错误:', error);
+      if (error.code === 'INSUFFICIENT_FUNDS') {
+        message.error('资金不足');
+      } else {
+        message.error(`交易失败: ${error.message}`);
+      }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -43,7 +62,9 @@ function TransModule() {
           suffix="ETH"
         />
       </div>
-      <Button onClick={transfer}>Transfer</Button>
+      <Button onClick={transfer} loading={loading}>
+        Transfer
+      </Button>
     </div>
   );
 }
