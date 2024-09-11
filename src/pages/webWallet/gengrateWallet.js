@@ -1,9 +1,9 @@
 import { Button, Input, message, Spin } from 'antd';
 import { useState } from 'react';
 import * as ethers from 'ethers';
-import { usePassword } from '../../Context';
 import { encryptData } from '../../util/securityUtils';
 import { provider } from '../../util/walletUtils';
+import useStore, { usePassword, useSeed } from '../../store';
 
 const bip39 = require('bip39');
 const { hdkey } = require('ethereumjs-wallet');
@@ -13,13 +13,13 @@ function Generate({ onNext }) {
   const [value, setValue] = useState('');
   const [mnemonic, setMnemonic] = useState();
   const [loading, setLoading] = useState(false);
-
+  const { setCurrentAccount, increaseCurrentIndex, initStoreState } = useStore();
+  const { setEncryptSeed } = useSeed();
   const { setPassword } = usePassword();
   const generate = async () => {
+    initStoreState();
     setLoading(true);
     try {
-      let currentIndex = localStorage.getItem('currentIndex') || 0;
-
       // 生成助记词 (128 + 4 / 11 => 助记词)
       const mnemonic = bip39.generateMnemonic();
       setMnemonic(mnemonic);
@@ -28,7 +28,7 @@ function Generate({ onNext }) {
       const seed = await bip39.mnemonicToSeed(mnemonic, value);
 
       // 生成钱包 (seed传入HMAC-SHA512函数 => {左边256位为主私钥(主公钥可以通过主私钥生成)，右边256位为主链码} => （主私钥/主公钥 主链码 索引) 传入HMAC-SHA512 => 生成子私钥，子链码 )
-      const HDKeyWallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0/${currentIndex}`);
+      const HDKeyWallet = hdkey.fromMasterSeed(seed).derivePath(`m/44'/60'/0'/0/0`);
       console.log('what is HDKeyWallet', HDKeyWallet);
       const privateKey = HDKeyWallet._hdkey.privateKey.toString('hex');
       console.log('privateKey', privateKey);
@@ -38,15 +38,16 @@ function Generate({ onNext }) {
       const accountInfo = {
         address: account.address,
         balance: ethers.formatEther(balance),
-        name: `Account${currentIndex}`,
+        name: `Account0`,
         jsonStore: keyFile,
       };
-
-      currentIndex++;
-      localStorage.setItem('currentIndex', currentIndex);
-      localStorage.setItem('encryptSeed', encryptData(seed.toString('hex'), value));
+      setCurrentAccount(accountInfo);
       localStorage.setItem('keyFiles', JSON.stringify([accountInfo]));
+
+      setEncryptSeed(encryptData(seed.toString('hex'), value));
       setPassword(value);
+      increaseCurrentIndex();
+
       message.success('generate wallet success!');
       // onNext(2);
     } catch (error) {

@@ -2,13 +2,14 @@ import { Button, Input, message, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import * as ethers from 'ethers';
-import { usePassword } from '../../Context';
-
-function ImportJsonFile({ onNext }) {
+import useStore, { usePassword } from '../../store';
+import { provider } from '../../util/walletUtils';
+function ImportJsonFile({ onClose }) {
   const [value, setValue] = useState('');
   const [fileList, setFileList] = useState();
 
   const { password } = usePassword();
+  const { currentIndex, increaseCurrentIndex } = useStore();
 
   const [loading, setLoading] = useState(false);
 
@@ -26,12 +27,21 @@ function ImportJsonFile({ onNext }) {
       try {
         const wallet = await ethers.Wallet.fromEncryptedJson(e.target.result, value);
         const keyFile = await wallet.encrypt(password);
+        const balance = await provider.getBalance(wallet.address);
         const accounts = JSON.parse(localStorage.getItem('keyFiles'));
-        accounts.push(keyFile);
+        const accountInfo = {
+          address: wallet.address,
+          balance: ethers.formatEther(balance),
+          jsonStore: keyFile,
+          name: `Account${currentIndex}`,
+          tag: 'imported',
+        };
+        increaseCurrentIndex();
+        accounts.push(accountInfo);
         localStorage.setItem('keyFiles', JSON.stringify(accounts));
         message.success('导入成功！');
         setLoading(false);
-        onNext(2);
+        onClose(2);
 
         // todo: router or other things!
       } catch (error) {

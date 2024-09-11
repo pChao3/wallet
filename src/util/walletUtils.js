@@ -1,7 +1,6 @@
 import { ethers } from 'ethers';
-import { usePassword } from '../Context';
 import { useEffect, useState } from 'react';
-import useStore from '../store';
+import useStore, { usePassword } from '../store';
 
 const API_KEY = '3fc6c894f35a4458839f899be37925af';
 // console.log(process.env);
