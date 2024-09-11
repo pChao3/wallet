@@ -6,10 +6,13 @@ import { decryptData } from '../../../util/securityUtils';
 import { hdkey } from 'ethereumjs-wallet';
 import useStore, { usePassword, useSeed } from '../../../store';
 
+import ImportJsonFile from '../importFile';
+
 function AccountList() {
   const { password } = usePassword();
   const [accountList, setAccountList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openJSONModal, setOpenJSONModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listLoading, setListloading] = useState(false);
 
@@ -97,9 +100,19 @@ function AccountList() {
               ))}
           </ul>
         </Spin>
+        <Button onClick={() => setOpenJSONModal(true)}>导入密钥文件</Button>
         <Button onClick={addAccount} loading={loading}>
-          添加新账户
+          创建新账户
         </Button>
+      </Modal>
+      <Modal
+        className="text-center"
+        title="导入JSON文件"
+        open={openJSONModal}
+        onCancel={() => setOpenJSONModal(false)}
+        footer={null}
+      >
+        <ImportJsonFile onClose={() => setOpenJSONModal(false)} />
       </Modal>
       <a className="cursor-pointer text-blue-500" onClick={openModal}>
         +

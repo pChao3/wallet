@@ -15,14 +15,28 @@ const useStore = create(
   )
 );
 
-export const useSeed = create(set => ({
-  encryptSeed: '',
-  setEncryptSeed: encryptSeed => set(() => ({ encryptSeed: encryptSeed })),
-}));
+export const useSeed = create(
+  persist(
+    set => ({
+      encryptSeed: '',
+      setEncryptSeed: encryptSeed => set(() => ({ encryptSeed: encryptSeed })),
+    }),
+    {
+      name: 'encryptSeed',
+    }
+  )
+);
 
-export const usePassword = create(set => ({
-  password: '',
-  setPassword: password => set(() => ({ password: password })),
-}));
+export const usePassword = create(
+  persist(
+    set => ({
+      password: '',
+      setPassword: password => set(() => ({ password: password })),
+    }),
+    {
+      name: 'password',
+    }
+  )
+);
 
 export default useStore;
