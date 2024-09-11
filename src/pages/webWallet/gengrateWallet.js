@@ -4,6 +4,7 @@ import * as ethers from 'ethers';
 import { usePassword } from '../../Context';
 import { encryptData } from '../../util/securityUtils';
 import { provider } from '../../util/walletUtils';
+import useStore from '../../store';
 
 const bip39 = require('bip39');
 const { hdkey } = require('ethereumjs-wallet');
@@ -13,6 +14,7 @@ function Generate({ onNext }) {
   const [value, setValue] = useState('');
   const [mnemonic, setMnemonic] = useState();
   const [loading, setLoading] = useState(false);
+  const { setCurrentAccount } = useStore();
 
   const { setPassword } = usePassword();
   const generate = async () => {
@@ -41,7 +43,7 @@ function Generate({ onNext }) {
         name: `Account${currentIndex}`,
         jsonStore: keyFile,
       };
-
+      setCurrentAccount(accountInfo);
       currentIndex++;
       localStorage.setItem('currentIndex', currentIndex);
       localStorage.setItem('encryptSeed', encryptData(seed.toString('hex'), value));
