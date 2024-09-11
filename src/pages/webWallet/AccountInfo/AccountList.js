@@ -1,20 +1,20 @@
 import { ethers } from 'ethers';
-import { usePassword } from '../../../Context';
 import { getBalance, provider } from '../../../util/walletUtils';
 import { useEffect, useState } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Spin } from 'antd';
 import { decryptData } from '../../../util/securityUtils';
 import { hdkey } from 'ethereumjs-wallet';
-import useStore from '../../../store';
+import useStore, { usePassword, useSeed } from '../../../store';
 
 function AccountList() {
   const { password } = usePassword();
   const [accountList, setAccountList] = useState([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [listLoading, setListloading] = useState(false);
 
-  const { setCurrentAccount } = useStore();
+  const { setCurrentAccount, currentIndex, increaseCurrentIndex } = useStore();
+  const { encryptSeed } = useSeed();
 
   const getAccountsInfo = async () => {
     const infos = JSON.parse(localStorage.getItem('keyFiles'));
@@ -31,11 +31,9 @@ function AccountList() {
 
   const addAccount = async () => {
     setLoading(true);
+    setListloading(true);
     try {
-      let currentIndex = localStorage.getItem('currentIndex');
-
-      const encrySeed = localStorage.getItem('encryptSeed');
-      const seed = decryptData(encrySeed, password);
+      const seed = decryptData(encryptSeed, password);
       const hdWallet = hdkey
         .fromMasterSeed(Buffer.from(seed, 'hex'))
         .derivePath(`m/44'/60'/0'/0/${currentIndex}`);
@@ -51,19 +49,20 @@ function AccountList() {
         name: `Account${currentIndex}`,
         jsonStore: jsonStore,
       });
-      currentIndex++;
-      localStorage.setItem('currentIndex', currentIndex);
+      increaseCurrentIndex();
       localStorage.setItem('keyFiles', JSON.stringify(accountList));
       setAccountList(accountList);
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
+      setListloading(false);
     }
   };
 
   const openModal = async () => {
     setIsModalOpen(true);
+    setListloading(true);
 
     const accountsList = JSON.parse(localStorage.getItem('keyFiles'));
     for (let i = 0; i < accountsList.length; i++) {
@@ -73,6 +72,7 @@ function AccountList() {
     }
     console.log(accountsList);
     setAccountList(accountsList);
+    setListloading(false);
     localStorage.setItem('keyFiles', JSON.stringify(accountsList));
   };
   return (
@@ -84,17 +84,19 @@ function AccountList() {
         onCancel={() => setIsModalOpen(false)}
         footer={null}
       >
-        <ul>
-          {accountList.length &&
-            accountList.map(i => (
-              <li key={i.address} onClick={() => selectAccount(i)} className="mt-4">
-                <a>
-                  <p> address: {i.address} </p>
-                  <p>balance :{i.balance}</p>
-                </a>
-              </li>
-            ))}
-        </ul>
+        <Spin tip="loading..." spinning={listLoading}>
+          <ul>
+            {accountList.length &&
+              accountList.map(i => (
+                <li key={i.address} onClick={() => selectAccount(i)} className="mt-4">
+                  <a>
+                    <p> address: {i.address} </p>
+                    <p>balance :{i.balance}</p>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </Spin>
         <Button onClick={addAccount} loading={loading}>
           添加新账户
         </Button>

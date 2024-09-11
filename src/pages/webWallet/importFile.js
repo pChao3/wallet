@@ -2,8 +2,7 @@ import { Button, Input, message, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import * as ethers from 'ethers';
-import { usePassword } from '../../Context';
-
+import { usePassword } from '../../store';
 function ImportJsonFile({ onNext }) {
   const [value, setValue] = useState('');
   const [fileList, setFileList] = useState();
