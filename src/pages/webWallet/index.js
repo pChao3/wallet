@@ -32,8 +32,10 @@ function WebWallet() {
   const onChange = key => {
     console.log(key);
   };
+
+  const addToken = () => {};
   return (
-    <div className="text-black text-2xl w-1/2 text-center bg-transparent p-4 border-white-200  rounded-2xl">
+    <div className="text-black text-2xl w-1/2 text-center bg-black bg-opacity-50 p-4 border-white border ">
       {page === 1 && (
         <div>
           <GenerateWallet onNext={setPage} />
@@ -50,10 +52,7 @@ function WebWallet() {
             转账
           </Button>
           {showInfo ? (
-            <div>
-              <Tabs defaultActiveKey="1" items={items} onChange={onChange} centered />
-              <Button onClick={() => setPage(1)}>返回</Button>
-            </div>
+            <Tabs defaultActiveKey="1" items={items} onChange={onChange} centered />
           ) : (
             <div>
               <TransModule />

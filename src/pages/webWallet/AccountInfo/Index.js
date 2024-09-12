@@ -10,7 +10,7 @@ function AccountInfo() {
   const { currentAccount } = useStore();
 
   return (
-    <div className="text-xl">
+    <div className="text-xl text-white">
       <AccountList />
       <p>address:{currentAccount.address}</p>
       <p>balance:{currentAccount.balance} ETH</p>
