@@ -13,7 +13,8 @@ function Generate({ onNext }) {
   const [value, setValue] = useState('');
   const [mnemonic, setMnemonic] = useState();
   const [loading, setLoading] = useState(false);
-  const { setCurrentAccount, increaseCurrentIndex, initStoreState } = useStore();
+  const { setCurrentAccount, increaseCurrentIndex, initStoreState, accountList, addAccountList } =
+    useStore();
   const { setEncryptSeed } = useSeed();
   const { setPassword } = usePassword();
   const generate = async () => {
@@ -38,12 +39,11 @@ function Generate({ onNext }) {
       const accountInfo = {
         address: account.address,
         balance: ethers.formatEther(balance),
-        name: `Account0`,
+        name: `Account1`,
         jsonStore: keyFile,
       };
       setCurrentAccount(accountInfo);
-      localStorage.setItem('keyFiles', JSON.stringify([accountInfo]));
-
+      addAccountList(accountInfo);
       setEncryptSeed(encryptData(seed.toString('hex'), value));
       setPassword(value);
       increaseCurrentIndex();
@@ -58,7 +58,7 @@ function Generate({ onNext }) {
 
   // 登陆
   const login = async () => {
-    const keyFile = getAccounts()[0];
+    const keyFile = accountList[0];
     try {
       await ethers.Wallet.fromEncryptedJson(keyFile.jsonStore, value);
       setPassword(value);
@@ -69,9 +69,6 @@ function Generate({ onNext }) {
     }
   };
 
-  const getAccounts = () => {
-    return JSON.parse(localStorage.getItem('keyFiles'));
-  };
   return (
     <div className="w-1/2 m-auto">
       <Input.Password
@@ -83,7 +80,7 @@ function Generate({ onNext }) {
           onVisibleChange: setShow,
         }}
       />
-      {getAccounts()?.length ? (
+      {accountList.length ? (
         <Button onClick={login}>登陆</Button>
       ) : (
         <Button onClick={generate} disabled={loading}>

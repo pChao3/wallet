@@ -1,31 +1,30 @@
 import { ethers } from 'ethers';
 import { getBalance, provider } from '../../../util/walletUtils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Spin } from 'antd';
+import { SwapOutlined } from '@ant-design/icons';
 import { decryptData } from '../../../util/securityUtils';
 import { hdkey } from 'ethereumjs-wallet';
 import useStore, { usePassword, useSeed } from '../../../store';
 
-import ImportJsonFile from '../importFile';
+import ImportJsonFile from './importFile';
 
 function AccountList() {
   const { password } = usePassword();
-  const [accountList, setAccountList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openJSONModal, setOpenJSONModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listLoading, setListloading] = useState(false);
 
-  const { setCurrentAccount, currentIndex, increaseCurrentIndex } = useStore();
+  const {
+    setCurrentAccount,
+    currentIndex,
+    increaseCurrentIndex,
+    accountList,
+    addAccountList,
+    setAccountList,
+  } = useStore();
   const { encryptSeed } = useSeed();
-
-  const getAccountsInfo = async () => {
-    const infos = JSON.parse(localStorage.getItem('keyFiles'));
-    setAccountList(infos);
-  };
-  useEffect(() => {
-    getAccountsInfo();
-  }, []);
 
   const selectAccount = i => {
     setCurrentAccount(i);
@@ -44,17 +43,15 @@ function AccountList() {
       const wallet = new ethers.Wallet(hdWallet._hdkey.privateKey.toString('hex'));
       const jsonStore = await wallet.encrypt(password);
 
-      const accountList = JSON.parse(localStorage.getItem('keyFiles'));
       const balance = await getBalance(wallet.address);
-      accountList.push({
+      const account = {
         address: wallet.address,
         balance: balance,
-        name: `Account${currentIndex}`,
+        name: `Account${currentIndex + 1}`,
         jsonStore: jsonStore,
-      });
+      };
       increaseCurrentIndex();
-      localStorage.setItem('keyFiles', JSON.stringify(accountList));
-      setAccountList(accountList);
+      addAccountList(account);
     } catch (error) {
       console.log(error);
     } finally {
@@ -67,16 +64,14 @@ function AccountList() {
     setIsModalOpen(true);
     setListloading(true);
 
-    const accountsList = JSON.parse(localStorage.getItem('keyFiles'));
-    for (let i = 0; i < accountsList.length; i++) {
-      const item = accountsList[i];
+    for (let i = 0; i < accountList.length; i++) {
+      const item = accountList[i];
       const balance = await provider.getBalance(item.address);
-      accountsList[i].balance = ethers.formatEther(balance);
+      accountList[i].balance = ethers.formatEther(balance);
     }
-    console.log(accountsList);
-    setAccountList(accountsList);
+    console.log(accountList);
+    setAccountList(accountList);
     setListloading(false);
-    localStorage.setItem('keyFiles', JSON.stringify(accountsList));
   };
   return (
     <div>
@@ -87,35 +82,49 @@ function AccountList() {
         onCancel={() => setIsModalOpen(false)}
         footer={null}
       >
-        <Spin tip="loading..." spinning={listLoading}>
-          <ul>
+        <Spin tip="加载中..." spinning={listLoading}>
+          <ul className="space-y-4 mb-6">
             {accountList.length &&
               accountList.map(i => (
-                <li key={i.address} onClick={() => selectAccount(i)} className="mt-4">
-                  <a>
-                    <p> address: {i.address} </p>
-                    <p>balance :{i.balance}</p>
-                  </a>
+                <li
+                  key={i.address}
+                  onClick={() => selectAccount(i)}
+                  className="p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition duration-300 cursor-pointer"
+                >
+                  <div className="text-left">
+                    <p className="text-sm text-gray-600">
+                      地址: <span className="font-mono text-gray-800">{i.address}</span>
+                    </p>
+                    <p className="text-sm text-gray-600 mt-2">
+                      余额: <span className="font-semibold text-gray-800">{i.balance} ETH</span>
+                    </p>
+                  </div>
                 </li>
               ))}
           </ul>
         </Spin>
-        <Button onClick={() => setOpenJSONModal(true)}>导入密钥文件</Button>
-        <Button onClick={addAccount} loading={loading}>
-          创建新账户
-        </Button>
+        <div className="flex justify-center space-x-4">
+          <Button
+            onClick={() => setOpenJSONModal(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            导入密钥文件
+          </Button>
+          <Button
+            onClick={addAccount}
+            loading={loading}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          >
+            创建新账户
+          </Button>
+        </div>
       </Modal>
-      <Modal
-        className="text-center"
-        title="导入JSON文件"
-        open={openJSONModal}
-        onCancel={() => setOpenJSONModal(false)}
-        footer={null}
+      <ImportJsonFile onClose={() => setOpenJSONModal(false)} open={openJSONModal} />
+      <a
+        className="cursor-pointer text-blue-500 hover:text-blue-600 transition duration-300 ml-2"
+        onClick={openModal}
       >
-        <ImportJsonFile onClose={() => setOpenJSONModal(false)} />
-      </Modal>
-      <a className="cursor-pointer text-blue-500" onClick={openModal}>
-        +
+        <SwapOutlined className="text-xl" />
       </a>
     </div>
   );
