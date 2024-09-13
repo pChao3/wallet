@@ -11,10 +11,6 @@ function ListItem({ info }) {
   const { currentAccount } = useStore();
 
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    getInfo();
-    console.log('did');
-  }, [currentAccount]);
 
   const getInfo = useCallback(async () => {
     console.log(info);
@@ -34,18 +30,23 @@ function ListItem({ info }) {
     } finally {
       setLoading(false);
     }
-  }, [currentAccount]);
+  }, [currentAccount, info]);
+
+  useEffect(() => {
+    getInfo();
+  }, [currentAccount, getInfo]);
+
   return (
-    <div className="rounded-lg p-6 hover:bg-gray-200 cursor-pointer transition duration-300 mb-4">
+    <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 cursor-pointer transition duration-300">
       <Spin spinning={loading}>
-        <div className="flex justify-between items-center space-x-4">
-          <div className="flex-1 space-y-2">
-            <h3 className="text-xl font-semibold text-white">{name}</h3>
-            <p className="text-sm text-gray-100">{symbol}</p>
+        <div className="flex justify-between items-center">
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-white mb-1">{name}</h3>
+            <p className="text-sm text-gray-400">{symbol}</p>
           </div>
-          <div className="text-right space-y-1">
-            <p className="text-2xl font-bold text-blue-600">{balance}</p>
-            <p className="text-sm text-gray-100">{symbol}</p>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-blue-400 mb-1">{balance}</p>
+            <p className="text-sm text-gray-400">{symbol}</p>
           </div>
         </div>
       </Spin>
