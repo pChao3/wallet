@@ -27,7 +27,7 @@ function WebWallet() {
   };
 
   return (
-    <div className="w-1/3 mx-auto p-6 bg-gray-900 rounded-xl shadow-2xl text-white">
+    <div className="w-1/3 mx-auto p-6 bg-gray-900 rounded-xl shadow-2xl text-white text-center">
       {page === 1 && (
         <div className="mb-6">
           <GenerateWallet onNext={setPage} />

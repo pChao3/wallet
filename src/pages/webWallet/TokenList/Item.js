@@ -34,7 +34,7 @@ function ListItem({ info }) {
 
   useEffect(() => {
     getInfo();
-  }, [currentAccount, getInfo]);
+  }, [currentAccount]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 cursor-pointer transition duration-300">

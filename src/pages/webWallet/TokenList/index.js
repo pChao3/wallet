@@ -1,29 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Input, message } from 'antd';
-import { AirToken, WaterToken } from '../../addressConfig';
-import tokenABI from '../../../contract/Token.json';
 import Item from './Item';
 import useStore from '../../../store';
-const tokenlist = [
-  {
-    address: AirToken,
-    abi: tokenABI.abi,
-  },
-  {
-    address: WaterToken,
-    abi: tokenABI.abi,
-  },
-];
+
 const api_key = 'CCABDVGYXV5GT1RHWH9IKR2XF18Z5GV3A7';
 function Index() {
   const [contractAddress, setContractAddress] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { addTokenInfo, tokensInfo } = useStore();
-
-  useEffect(() => {
-    addTokenInfo(tokenlist);
-  }, [addTokenInfo]);
 
   const addAddress = async () => {
     console.log(contractAddress);
@@ -42,12 +27,19 @@ function Index() {
         return;
       }
       addTokenInfo({ address: contractAddress, abi: JSON.parse(res.result) });
+      setModalOpen(false);
     } catch (error) {
       message.error(error.code);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      setContractAddress('');
+    }
+  }, [isModalOpen]);
 
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
