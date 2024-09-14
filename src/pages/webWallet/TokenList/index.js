@@ -1,29 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Input, message } from 'antd';
-import { AirToken, WaterToken } from '../../addressConfig';
-import tokenABI from '../../../contract/Token.json';
 import Item from './Item';
 import useStore from '../../../store';
-const tokenlist = [
-  {
-    address: AirToken,
-    abi: tokenABI.abi,
-  },
-  {
-    address: WaterToken,
-    abi: tokenABI.abi,
-  },
-];
+
 const api_key = 'CCABDVGYXV5GT1RHWH9IKR2XF18Z5GV3A7';
 function Index() {
   const [contractAddress, setContractAddress] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { addTokenInfo, tokensInfo } = useStore();
-
-  useEffect(() => {
-    addTokenInfo(tokenlist);
-  }, [addTokenInfo]);
 
   const addAddress = async () => {
     console.log(contractAddress);

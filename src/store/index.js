@@ -1,12 +1,24 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { AirToken, WaterToken } from '../pages/addressConfig';
+import tokenABI from '../contract/Token.json';
+const tokenlist = [
+  {
+    address: AirToken,
+    abi: tokenABI.abi,
+  },
+  {
+    address: WaterToken,
+    abi: tokenABI.abi,
+  },
+];
 const useStore = create(
   persist(
     set => ({
       currentIndex: 0,
       currentAccount: {},
       accountList: [],
-      tokensInfo: [],
+      tokensInfo: tokenlist,
       setCurrentAccount: currentAccount => set(() => ({ currentAccount: currentAccount })),
       increaseCurrentIndex: () => set(state => ({ currentIndex: state.currentIndex + 1 })),
       addAccountList: account => set(state => ({ accountList: state.accountList.concat(account) })),

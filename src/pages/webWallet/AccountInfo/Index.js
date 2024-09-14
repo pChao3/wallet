@@ -21,10 +21,10 @@ function AccountInfo() {
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
       <div className=" flex items-center justify-between text-white">
         <div className="flex-1">
-          <p className="text-2xl font-bold mb-2 flex justify-center ">
+          <div className="text-2xl font-bold mb-2 flex justify-center ">
             <p>{currentAccount.name}</p>
             <AccountList />
-          </p>
+          </div>
           <p className="text-sm text-gray-400">
             地址: <span className="font-mono text-gray-300">{currentAccount.address}</span>
           </p>
