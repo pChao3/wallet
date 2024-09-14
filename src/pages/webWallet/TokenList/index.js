@@ -27,12 +27,19 @@ function Index() {
         return;
       }
       addTokenInfo({ address: contractAddress, abi: JSON.parse(res.result) });
+      setModalOpen(false);
     } catch (error) {
       message.error(error.code);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      setContractAddress('');
+    }
+  }, [isModalOpen]);
 
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
