@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Input, message } from 'antd';
 import Item from './Item';
+import TokenInfo from './TokenInfo';
 import useStore from '../../../store';
+import { getAbiFromAddress } from '../utils';
 
-const api_key = 'CCABDVGYXV5GT1RHWH9IKR2XF18Z5GV3A7';
 function Index() {
   const [contractAddress, setContractAddress] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selectToken, setSelectToken] = useState();
+  const [open, setTokenOpen] = useState(false);
   const { addTokenInfo, tokensInfo } = useStore();
 
   const addAddress = async () => {
@@ -18,10 +21,7 @@ function Index() {
     }
     setLoading(true);
     try {
-      const apiUrl = 'https://api-sepolia.etherscan.io/api';
-      const res = await fetch(
-        `${apiUrl}/?module=contract&action=getabi&address=${contractAddress}&apikey=${api_key}`
-      ).then(res => res.json());
+      const res = await getAbiFromAddress(contractAddress);
       if (res.status === '0') {
         message.error('请检查导入合约地址！');
         return;
@@ -41,13 +41,23 @@ function Index() {
     }
   }, [isModalOpen]);
 
+  const clickToken = i => {
+    setSelectToken(i);
+    setTokenOpen(true);
+  };
+  const closeFresh = () => {
+    setTokenOpen(false);
+  };
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
       <ul className="space-y-4 mb-6">
         {tokensInfo.map(i => (
-          <Item info={i} key={i.address} />
+          <div onClick={() => clickToken(i)}>
+            <Item info={i} key={i.address} />
+          </div>
         ))}
       </ul>
+      {open && <TokenInfo open={open} tokenInfo={selectToken} onClose={closeFresh} />}
       <div className="text-center">
         <Button
           type="primary"

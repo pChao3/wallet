@@ -102,7 +102,7 @@ function Generate({ onNext }) {
           <Button
             onClick={() => {
               setMnemonic('');
-              onNext(2);
+              navigate('/wallet/info');
             }}
           >
             我已安全保存助记词
