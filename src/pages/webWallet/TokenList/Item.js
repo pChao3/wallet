@@ -24,17 +24,16 @@ function ListItem({ info }) {
       setBalance(ethers.formatEther(balance));
       setName(name);
       setSymbol(symbol);
-      console.log('balance', ethers.formatEther(balance));
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
-  }, [currentAccount, info]);
+  }, [currentAccount.address, info]);
 
   useEffect(() => {
     getInfo();
-  }, [currentAccount]);
+  }, [currentAccount.address]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 cursor-pointer transition duration-300">

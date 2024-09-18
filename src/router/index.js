@@ -1,45 +1,72 @@
 import App from '../App'; //正常加载方式
+import { Suspense, useEffect } from 'react';
+import { createBrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import ContentLayout from '../pages/content/Content'; //name
+import LoginWallet from '../pages/webWallet/LoginPage';
 import WebWallet from '../pages/webWallet';
 import Faucet from '../pages/faucet';
 import Transfer from '../pages/transfer'; // transfer
-import Wallet from '../pages/wallet'; // wallet
+// import Wallet from '../pages/wallet'; // wallet
 import NFTMarket from '../pages/NFTMarket/index';
 
 import UnoSwap from '../pages/unoSwap/index';
+import { usePassword } from '../store';
 
-export default [
+export const RouterBeforeEach = ({ children }) => {
+  const location = useLocation();
+  const navigator = useNavigate();
+  const { password } = usePassword();
+  useEffect(() => {
+    if (!password && location.pathname === '/wallet/info') {
+      navigator('/wallet');
+    }
+  }, [location.pathname, password]);
+  return children;
+};
+const routes = [
   {
     path: '/',
     element: <App />,
-
     children: [
-      // {
-      //   index: true,
-      //   element: <ContentLayout />,
-      // },
       {
         index: true,
-        element: <WebWallet />,
+        name: 'Name',
+        element: <ContentLayout />,
       },
       {
         path: 'faucet',
+        name: 'Faucet',
         element: <Faucet />,
       },
       {
         path: 'wallet',
-        element: <Wallet />,
+        name: 'ETH-Wallet',
+        children: [
+          { index: true, element: <LoginWallet /> },
+          {
+            path: 'info',
+            element: (
+              <RouterBeforeEach>
+                <WebWallet />
+              </RouterBeforeEach>
+            ),
+          },
+        ],
       },
+
       {
         path: 'transfer',
+        name: 'ERC20-Transfer',
         element: <Transfer />,
       },
       {
         path: 'NFTMarket',
+        name: 'NFT-Market',
         element: <NFTMarket />,
       },
       {
         path: 'UnoSwap',
+        name: 'UnoSwap',
         element: <UnoSwap />,
       },
       //   {
@@ -53,3 +80,5 @@ export default [
     ],
   },
 ];
+
+export default routes;
