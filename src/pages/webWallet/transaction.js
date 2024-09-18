@@ -2,14 +2,12 @@ import { Button, message } from 'antd';
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import useWallet, { provider } from '../../util/walletUtils';
-import useStore from '../../store';
 
 function TransModule() {
-  const [toAddress, setToAddress] = useState('0x624FB60F2b3406Db42E164fEBc928a553B0D9eD4');
+  const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const { setCurrentAccount, currentAccount } = useStore();
-  const { wallet } = useWallet();
+  const { wallet, refreshCurrentState } = useWallet();
 
   const transfer = async () => {
     if (!toAddress || !amount) {
@@ -28,11 +26,7 @@ function TransModule() {
       console.log(signer, receipt);
       message.success('转账成功！');
 
-      const balance = await provider.getBalance(wallet.address);
-      setCurrentAccount({
-        ...currentAccount,
-        balance: ethers.formatEther(balance),
-      });
+      refreshCurrentState();
     } catch (error) {
       console.error('交易错误:', error);
       if (error.code === 'INSUFFICIENT_FUNDS') {

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useStore, { usePassword } from '../store';
 
 const API_KEY = '3fc6c894f35a4458839f899be37925af';
@@ -15,20 +15,27 @@ function useWallet() {
   const { password } = usePassword();
   const [wallet, setWallet] = useState();
   const [address, setAddress] = useState(0);
-  const { currentAccount } = useStore();
+  const { currentAccount, setCurrentAccount } = useStore();
   useEffect(() => {
     if (!password) return;
 
     const keyFile = currentAccount.jsonStore;
     console.log(keyFile);
-    const loadWallet = async () => {
-      const wallet = await ethers.Wallet.fromEncryptedJson(keyFile, password);
-      setWallet(wallet);
-      setAddress(wallet.address);
-    };
-    loadWallet();
+    ethers.Wallet.fromEncryptedJson(keyFile, password).then(res => {
+      setWallet(res);
+      setAddress(res.wallet);
+    });
   }, [password, currentAccount]);
 
-  return { wallet, address };
+  const refreshCurrentState = useCallback(async () => {
+    provider.getBalance(currentAccount.address).then(res => {
+      setCurrentAccount({
+        ...currentAccount,
+        balance: ethers.formatEther(res),
+      });
+    });
+  }, [currentAccount]);
+
+  return { wallet, address, refreshCurrentState };
 }
 export default useWallet;

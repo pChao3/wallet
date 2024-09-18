@@ -24,7 +24,6 @@ function ListItem({ info }) {
       setBalance(ethers.formatEther(balance));
       setName(name);
       setSymbol(symbol);
-      console.log('balance', ethers.formatEther(balance));
     } catch (error) {
       console.log(error);
     } finally {

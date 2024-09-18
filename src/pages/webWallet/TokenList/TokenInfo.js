@@ -16,7 +16,7 @@ function TokenInfo({ open, tokenInfo, onClose }) {
   const [recipientAddress, setRecipientAddress] = useState('');
   const { currentAccount } = useStore();
 
-  const { wallet } = useWallet();
+  const { wallet, refreshCurrentState } = useWallet();
 
   const init = async () => {
     try {
@@ -39,7 +39,7 @@ function TokenInfo({ open, tokenInfo, onClose }) {
 
   useEffect(() => {
     init();
-  }, []);
+  }, [tokenInfo]);
 
   const handleTransfer = async () => {
     setBtnLoading(true);
@@ -54,6 +54,8 @@ function TokenInfo({ open, tokenInfo, onClose }) {
       console.log('wx', tx);
       await tx.wait();
       message.success('转账成功');
+
+      refreshCurrentState();
       init(); // 刷新余额
     } catch (error) {
       console.error('转账失败:', error);
@@ -73,11 +75,16 @@ function TokenInfo({ open, tokenInfo, onClose }) {
     }
   };
 
+  const close = () => {
+    onClose();
+    setTransferAmount();
+    setRecipientAddress();
+  };
   return (
     <Modal
       title={<h2 className="text-2xl font-bold text-gray-800">代币信息</h2>}
       open={open}
-      onCancel={onClose}
+      onCancel={close}
       footer={null}
       className="font-sans"
       width={440}

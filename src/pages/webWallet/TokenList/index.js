@@ -4,6 +4,8 @@ import Item from './Item';
 import TokenInfo from './TokenInfo';
 import useStore from '../../../store';
 import { getAbiFromAddress } from '../utils';
+import useWallet from '../../../util/walletUtils';
+import { provider } from '../../../util/walletUtils';
 
 function Index() {
   const [contractAddress, setContractAddress] = useState('');
@@ -12,6 +14,7 @@ function Index() {
   const [selectToken, setSelectToken] = useState();
   const [open, setTokenOpen] = useState(false);
   const { addTokenInfo, tokensInfo } = useStore();
+  // const { refreshCurrentState } = useWallet();
 
   const addAddress = async () => {
     console.log(contractAddress);
@@ -45,8 +48,10 @@ function Index() {
     setSelectToken(i);
     setTokenOpen(true);
   };
-  const closeFresh = () => {
+  const closeFresh = async () => {
     setTokenOpen(false);
+    // 更新当前余额
+    // refreshCurrentState();
   };
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
@@ -57,7 +62,7 @@ function Index() {
           </div>
         ))}
       </ul>
-      {open && <TokenInfo open={open} tokenInfo={selectToken} onClose={closeFresh} />}
+      <TokenInfo open={open} tokenInfo={selectToken} onClose={closeFresh} />
       <div className="text-center">
         <Button
           type="primary"
