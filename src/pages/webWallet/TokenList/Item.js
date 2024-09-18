@@ -30,11 +30,11 @@ function ListItem({ info }) {
     } finally {
       setLoading(false);
     }
-  }, [currentAccount, info]);
+  }, [currentAccount.address, info]);
 
   useEffect(() => {
     getInfo();
-  }, [currentAccount]);
+  }, [currentAccount.address]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 hover:bg-gray-700 cursor-pointer transition duration-300">

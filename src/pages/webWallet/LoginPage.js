@@ -4,6 +4,7 @@ import * as ethers from 'ethers';
 import { encryptData } from '../../util/securityUtils';
 import { provider } from '../../util/walletUtils';
 import useStore, { usePassword, useSeed } from '../../store';
+import { useNavigate } from 'react-router-dom';
 
 const bip39 = require('bip39');
 const { hdkey } = require('ethereumjs-wallet');
@@ -17,6 +18,7 @@ function Generate({ onNext }) {
     useStore();
   const { setEncryptSeed } = useSeed();
   const { setPassword } = usePassword();
+  const navigate = useNavigate();
   const generate = async () => {
     initStoreState();
     setLoading(true);
@@ -62,7 +64,8 @@ function Generate({ onNext }) {
     try {
       await ethers.Wallet.fromEncryptedJson(keyFile.jsonStore, value);
       setPassword(value);
-      onNext(2);
+      // onNext(2);
+      navigate('/wallet/info');
     } catch (error) {
       console.log(error);
       message.error('密码错误!');
@@ -70,9 +73,10 @@ function Generate({ onNext }) {
   };
 
   return (
-    <div className="w-1/2 m-auto">
+    <div className="w-1/3 mx-auto p-6 bg-gray-900 rounded-xl shadow-2xl text-white text-center">
       <Input.Password
         placeholder="请输入密码"
+        className="mt-4"
         value={value}
         onChange={e => setValue(e.target.value)}
         visibilityToggle={{
@@ -81,15 +85,19 @@ function Generate({ onNext }) {
         }}
       />
       {accountList.length ? (
-        <Button onClick={login}>登陆</Button>
+        !mnemonic && (
+          <Button className="mt-4" onClick={login}>
+            登陆
+          </Button>
+        )
       ) : (
-        <Button onClick={generate} disabled={loading}>
+        <Button className="mt-4" onClick={generate} disabled={loading}>
           {loading ? <Spin /> : '生成钱包账户'}
         </Button>
       )}
       {mnemonic && (
         <div>
-          <h3>您的助记词（请安全保存，不要分享给他人）：</h3>
+          <h3>请牢记您的助记词和密码（请安全保存，不要分享给他人）：</h3>
           <p>{mnemonic}</p>
           <Button
             onClick={() => {
