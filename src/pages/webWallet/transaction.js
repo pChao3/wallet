@@ -1,13 +1,15 @@
 import { Button, message } from 'antd';
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import useWallet, { provider } from '../../util/walletUtils';
+import { provider } from '../../util/walletUtils';
+import useStore, { usePassword } from '../../store';
 
 function TransModule() {
   const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const { wallet, refreshCurrentState } = useWallet();
+  const { currentAccount, setCurrentAccount } = useStore();
+  const { password } = usePassword();
 
   const transfer = async () => {
     if (!toAddress || !amount) {
@@ -15,8 +17,10 @@ function TransModule() {
       return;
     }
     setLoading(true);
-    const signer = await wallet.connect(provider);
+
     try {
+      const wallet = await ethers.Wallet.fromEncryptedJson(currentAccount.jsonStore, password);
+      const signer = await wallet.connect(provider);
       const tx = await signer.sendTransaction({
         to: toAddress,
         value: ethers.parseUnits(amount),
@@ -39,6 +43,13 @@ function TransModule() {
     }
   };
 
+  const refreshCurrentState = async () => {
+    const balance = await provider.getBalance(currentAccount.address);
+    setCurrentAccount({
+      ...currentAccount,
+      balance: ethers.formatEther(balance),
+    });
+  };
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold text-white text-center mb-6">转账</h2>
