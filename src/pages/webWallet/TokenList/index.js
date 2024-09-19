@@ -50,17 +50,16 @@ function Index() {
   };
   const closeFresh = async () => {
     setTokenOpen(false);
-    // 更新当前余额
-    // refreshCurrentState();
   };
   return (
     <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
       <ul className="space-y-4 mb-6">
-        {tokensInfo.map(i => (
-          <div onClick={() => clickToken(i)}>
-            <Item info={i} key={i.address} />
-          </div>
-        ))}
+        {!open &&
+          tokensInfo.map(i => (
+            <div onClick={() => clickToken(i)}>
+              <Item info={i} key={i.address} />
+            </div>
+          ))}
       </ul>
       <TokenInfo open={open} tokenInfo={selectToken} onClose={closeFresh} />
       <div className="text-center">
