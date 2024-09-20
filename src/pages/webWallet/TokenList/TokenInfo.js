@@ -38,7 +38,9 @@ function TokenInfo({ open, tokenInfo, onClose }) {
   };
 
   useEffect(() => {
-    init();
+    if (tokenInfo) {
+      init();
+    }
   }, [tokenInfo]);
 
   const handleTransfer = async () => {

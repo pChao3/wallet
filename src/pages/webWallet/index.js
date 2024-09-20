@@ -3,6 +3,7 @@ import { useState } from 'react';
 import AccountInfo from './AccountInfo/Index';
 import TransModule from './transaction';
 import TokenList from './TokenList';
+import Activity from './Activity/Activity';
 
 const items = [
   {
@@ -12,8 +13,8 @@ const items = [
   },
   {
     key: '2',
-    label: '交易',
-    children: <div>222</div>,
+    label: '活动',
+    children: <Activity />,
   },
 ];
 
