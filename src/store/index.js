@@ -28,7 +28,7 @@ const useStore = create(
         set(state => {
           return state.accountList.filter(i => i.address !== address);
         }),
-      initStoreState: () => set(() => ({ currentIndex: 0, currentAccount: {} })),
+      initStoreState: () => set(() => ({ currentIndex: 0, currentAccount: {}, accountList: [] })),
     }),
     {
       name: 'currentAccountInfo',

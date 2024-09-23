@@ -2,7 +2,8 @@ import App from '../App'; //正常加载方式
 import { Suspense, useEffect } from 'react';
 import { createBrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import ContentLayout from '../pages/content/Content'; //name
-import LoginWallet from '../pages/webWallet/LoginPage';
+import LoginPage from '../pages/webWallet/LoginPage';
+import MnemonicPage from '../pages/webWallet/MnemonicPage';
 import WebWallet from '../pages/webWallet';
 import Faucet from '../pages/faucet';
 import Transfer from '../pages/transfer'; // transfer
@@ -42,7 +43,7 @@ const routes = [
         path: 'wallet',
         name: 'ETH-Wallet',
         children: [
-          { index: true, element: <LoginWallet /> },
+          { index: true, element: <LoginPage /> },
           {
             path: 'info',
             element: (
@@ -51,6 +52,7 @@ const routes = [
               </RouterBeforeEach>
             ),
           },
+          { path: 'loginWithMnemonic', element: <MnemonicPage /> },
         ],
       },
 
