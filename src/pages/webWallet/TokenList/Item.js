@@ -13,7 +13,6 @@ function ListItem({ info }) {
   const [loading, setLoading] = useState(false);
 
   const getInfo = useCallback(async () => {
-    console.log(info);
     if (!info) return;
     setLoading(true);
     try {

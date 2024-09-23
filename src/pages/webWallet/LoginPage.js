@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const bip39 = require('bip39');
 const { hdkey } = require('ethereumjs-wallet');
 
-function Generate({ onNext }) {
+function Generate() {
   const [show, setShow] = useState(false);
   const [value, setValue] = useState('');
   const [mnemonic, setMnemonic] = useState();
@@ -23,7 +23,7 @@ function Generate({ onNext }) {
     initStoreState();
     setLoading(true);
     try {
-      // 生成助记词 (128 + 4 / 11 => 助记词)
+      // 生成助记词 ((128 + 4) / 11 => 助记词)
       const mnemonic = bip39.generateMnemonic();
       setMnemonic(mnemonic);
       // console.log('mnemonic', mnemonic);
@@ -72,6 +72,9 @@ function Generate({ onNext }) {
     }
   };
 
+  const loginWithMnenoic = async () => {
+    navigate('/wallet/loginWithMnemonic');
+  };
   return (
     <div className="w-1/3 mx-auto p-6 bg-gray-900 rounded-xl shadow-2xl text-white text-center">
       <Input.Password
@@ -108,6 +111,16 @@ function Generate({ onNext }) {
             我已安全保存助记词
           </Button>
         </div>
+      )}
+      {!mnemonic && (
+        <p className="mt-4">
+          <span
+            className="text-gray-400 cursor-pointer hover:text-gray-100 underline"
+            onClick={loginWithMnenoic}
+          >
+            助记词登陆
+          </span>
+        </p>
       )}
     </div>
   );
