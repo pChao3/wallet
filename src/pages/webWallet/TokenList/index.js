@@ -56,8 +56,8 @@ function Index() {
       <ul className="space-y-4 mb-6">
         {!open &&
           tokensInfo.map(i => (
-            <div onClick={() => clickToken(i)}>
-              <Item info={i} key={i.address} />
+            <div onClick={() => clickToken(i)} key={i.address}>
+              <Item info={i} />
             </div>
           ))}
       </ul>
