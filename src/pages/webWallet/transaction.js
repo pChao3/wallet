@@ -1,15 +1,25 @@
-import { Button, message } from 'antd';
-import { useState } from 'react';
+import { Button, message, notification, Spin } from 'antd';
+import TransactionSignModal from './SignerModal';
+import { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { provider } from '../../util/walletUtils';
 import useStore, { usePassword } from '../../store';
-
+const sepoliaUrl = 'https://sepolia.etherscan.io/tx/';
 function TransModule() {
   const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const [showSignModal, setShowSignModal] = useState(false);
+  const [transaction, setTransaction] = useState(null);
+  const [wallet, setWallet] = useState();
+
   const { currentAccount, setCurrentAccount } = useStore();
   const { password } = usePassword();
+
+  const [api, contextHolder] = notification.useNotification();
+  const [notifyShow, setNotifyShow] = useState(false);
+  const [txHash, setTxHash] = useState('');
 
   const transfer = async () => {
     if (!toAddress || !amount) {
@@ -21,16 +31,27 @@ function TransModule() {
     try {
       const wallet = await ethers.Wallet.fromEncryptedJson(currentAccount.jsonStore, password);
       const signer = await wallet.connect(provider);
-      const tx = await signer.sendTransaction({
-        to: toAddress,
-        value: ethers.parseUnits(amount),
-      });
-      console.log('tx', tx);
-      const receipt = await tx.wait();
-      console.log(signer, receipt);
-      message.success('转账成功！');
+      const nonce = await provider.getTransactionCount(currentAccount.address);
+      console.log(nonce);
+      setWallet(signer);
+      const netWork = await provider.getNetwork();
+      const chainId = netWork.chainId;
 
-      refreshCurrentState();
+      const currentGasPrice = (await provider.getFeeData()).gasPrice;
+      const params = {
+        from: currentAccount.address,
+        to: toAddress,
+        gasLimit: 21000,
+        gasPrice: currentGasPrice,
+        // gasPrice: ethers.parseUnits('500', 'gwei'),
+        value: ethers.parseUnits(amount),
+        chainId,
+        nonce: nonce,
+      };
+      console.log('ended', params, chainId);
+
+      setTransaction(params);
+      setShowSignModal(true);
     } catch (error) {
       console.error('交易错误:', error);
       if (error.code === 'INSUFFICIENT_FUNDS') {
@@ -43,6 +64,81 @@ function TransModule() {
     }
   };
 
+  const fn = txHash => {
+    console.log('222');
+    api.info({
+      key: txHash,
+      message: `Notification`,
+      description: (
+        <div className="flex justify-between">
+          <div>
+            <p>状态</p>
+            <p>待处理</p>
+          </div>
+          <Spin spinning={true}></Spin>
+          <div>
+            <a className="text-blue-400" onClick={() => window.open(sepoliaUrl + txHash)}>
+              去区块浏览器查看
+            </a>
+          </div>
+        </div>
+      ),
+      placement: 'topRight',
+      duration: 0,
+    });
+  };
+
+  const fn1 = flag => {
+    api[flag ? 'success' : 'info']({
+      message: `Notification`,
+      description: (
+        <div className="flex justify-between">
+          <div>
+            <p>状态</p>
+            <p>{!flag ? '处理中' : '成功'}</p>
+          </div>
+          {!flag && <Spin spinning={true}></Spin>}
+          <div>
+            <a className="text-blue-400" onClick={() => window.open(sepoliaUrl + txHash)}>
+              去区块浏览器查看
+            </a>
+          </div>
+        </div>
+      ),
+      placement: 'topRight',
+      duration: 0,
+    });
+  };
+  useEffect(() => {
+    if (notification && txHash) {
+      fn1(false);
+    }
+  }, [notifyShow]);
+
+  const handleConfirmTransaction = async signedTx => {
+    try {
+      console.log('signTx', signedTx);
+      // provider.sendTransaction()
+      // provider.broadcastTransaction
+      const tx = await provider.broadcastTransaction(signedTx);
+      setShowSignModal(false);
+      setTxHash(tx.hash);
+
+      setNotifyShow(true);
+
+      console.log('交易已发送:', tx.hash);
+      const receipt = await tx.wait();
+      setNotifyShow(false);
+      fn1(true);
+
+      refreshCurrentState();
+
+      console.log('receipt', receipt);
+    } catch (error) {
+      console.error('发送交易失败:', error);
+    }
+  };
+
   const refreshCurrentState = async () => {
     const balance = await provider.getBalance(currentAccount.address);
     setCurrentAccount({
@@ -52,6 +148,7 @@ function TransModule() {
   };
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+      {contextHolder}
       <h2 className="text-2xl font-bold text-white text-center mb-6">转账</h2>
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
@@ -91,6 +188,16 @@ function TransModule() {
           确认转账
         </Button>
       </div>
+
+      {showSignModal && (
+        <TransactionSignModal
+          open={showSignModal}
+          transaction={transaction}
+          onConfirm={handleConfirmTransaction}
+          onCancel={() => setShowSignModal(false)}
+          wallet={wallet}
+        />
+      )}
     </div>
   );
 }
