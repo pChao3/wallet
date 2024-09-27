@@ -51,23 +51,19 @@ function TransactionSignModal({ transaction, onConfirm, onCancel, wallet, open }
       okText="确认并签署"
       onOk={handleConfirm}
       onCancel={onCancel}
+      className="p-4" // 添加 Tailwind CSS 类
     >
       <Spin spinning={loading}>
-        {error && <p className="error">{error}</p>}
-        <div className="transaction-details">
-          <p>发送地址: {transaction.from}</p>
-          <p>接收地址: {transaction.to}</p>
-          <p>金额: {ethers.formatEther(transaction.value)} ETH</p>
-          <p>Gas 价格: {gasPrice} Gwei</p>
-          <p>估算 Gas 用量: {estimatedGas}</p>
-          <p>总成本: {totalCost} ETH</p>
+        {error && <p className="text-red-500">{error}</p>}
+        <div className="transaction-details space-y-2">
+          {' '}
+          <p className="text-gray-700">发送地址: {transaction.from}</p>
+          <p className="text-gray-700">接收地址: {transaction.to}</p>
+          <p className="text-gray-700">金额: {ethers.formatEther(transaction.value)} ETH</p>
+          <p className="text-gray-700">Gas 价格: {gasPrice} Gwei</p>
+          <p className="text-gray-700">估算 Gas 用量: {estimatedGas}</p>
+          <p className="text-gray-700">总成本: {totalCost} ETH</p>
         </div>
-        {/* <div className="button-group">
-        <button onClick={handleConfirm} disabled={!!error}>
-          确认并签署
-        </button>
-        <button onClick={onCancel}>取消</button>
-      </div> */}
       </Spin>
     </Modal>
   );

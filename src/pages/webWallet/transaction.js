@@ -1,14 +1,14 @@
-import { Button, message, notification, Spin } from 'antd';
+import { Button, message } from 'antd';
 import TransactionSignModal from './SignerModal';
+import Notification from './Notification';
 import { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { provider } from '../../util/walletUtils';
 import useStore, { usePassword } from '../../store';
-const sepoliaUrl = 'https://sepolia.etherscan.io/tx/';
 function TransModule() {
   const [toAddress, setToAddress] = useState('');
   const [amount, setAmount] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const [showSignModal, setShowSignModal] = useState(false);
   const [transaction, setTransaction] = useState(null);
@@ -17,8 +17,7 @@ function TransModule() {
   const { currentAccount, setCurrentAccount } = useStore();
   const { password } = usePassword();
 
-  const [api, contextHolder] = notification.useNotification();
-  const [notifyShow, setNotifyShow] = useState(false);
+  const [hashLoading, setHashLoading] = useState(false);
   const [txHash, setTxHash] = useState('');
 
   const transfer = async () => {
@@ -26,7 +25,7 @@ function TransModule() {
       message.error('请填写完整的转账信息');
       return;
     }
-    setLoading(true);
+    setBtnLoading(true);
 
     try {
       const wallet = await ethers.Wallet.fromEncryptedJson(currentAccount.jsonStore, password);
@@ -60,60 +59,9 @@ function TransModule() {
         message.error(`交易失败: ${error.message}`);
       }
     } finally {
-      setLoading(false);
+      setBtnLoading(false);
     }
   };
-
-  const fn = txHash => {
-    console.log('222');
-    api.info({
-      key: txHash,
-      message: `Notification`,
-      description: (
-        <div className="flex justify-between">
-          <div>
-            <p>状态</p>
-            <p>待处理</p>
-          </div>
-          <Spin spinning={true}></Spin>
-          <div>
-            <a className="text-blue-400" onClick={() => window.open(sepoliaUrl + txHash)}>
-              去区块浏览器查看
-            </a>
-          </div>
-        </div>
-      ),
-      placement: 'topRight',
-      duration: 0,
-    });
-  };
-
-  const fn1 = flag => {
-    api[flag ? 'success' : 'info']({
-      message: `Notification`,
-      description: (
-        <div className="flex justify-between">
-          <div>
-            <p>状态</p>
-            <p>{!flag ? '处理中' : '成功'}</p>
-          </div>
-          {!flag && <Spin spinning={true}></Spin>}
-          <div>
-            <a className="text-blue-400" onClick={() => window.open(sepoliaUrl + txHash)}>
-              去区块浏览器查看
-            </a>
-          </div>
-        </div>
-      ),
-      placement: 'topRight',
-      duration: 0,
-    });
-  };
-  useEffect(() => {
-    if (notification && txHash) {
-      fn1(false);
-    }
-  }, [notifyShow]);
 
   const handleConfirmTransaction = async signedTx => {
     try {
@@ -124,12 +72,11 @@ function TransModule() {
       setShowSignModal(false);
       setTxHash(tx.hash);
 
-      setNotifyShow(true);
+      setHashLoading(true);
 
       console.log('交易已发送:', tx.hash);
       const receipt = await tx.wait();
-      setNotifyShow(false);
-      fn1(true);
+      setHashLoading(false);
 
       refreshCurrentState();
 
@@ -146,9 +93,10 @@ function TransModule() {
       balance: ethers.formatEther(balance),
     });
   };
+
   return (
     <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-      {contextHolder}
+      {txHash && <Notification loading={hashLoading} txHash={txHash} close={() => setTxHash()} />}
       <h2 className="text-2xl font-bold text-white text-center mb-6">转账</h2>
       <div className="space-y-4">
         <div className="flex flex-col space-y-2">
@@ -182,7 +130,7 @@ function TransModule() {
         </div>
         <Button
           onClick={transfer}
-          loading={loading}
+          loading={btnLoading}
           className="w-full bg-blue-500 hover:bg-blue-600 text-white border-none h-12 text-lg font-semibold rounded-lg transition duration-300 mt-4"
         >
           确认转账
