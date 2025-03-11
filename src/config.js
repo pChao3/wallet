@@ -9,7 +9,7 @@ export const config = createConfig({
     }),
   ],
   transports: {
-    [sepolia.id]: http(),
+    [sepolia.id]: http('https://sepolia.infura.io/v3/3fc6c894f35a4458839f899be37925af'),
     [hardhat.id]: http('http://127.0.0.1:8545/'),
   },
 });
